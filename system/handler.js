@@ -311,7 +311,7 @@ captionText = (`> ┌ *All Menu*
 > │ ◦ Total: ${totalCmds} Cmds
 > └ \n\n${allCatText.trim()}`);
 }
-let finalText = `https://github.com/kagenouReal/MBG-MD
+let finalText = `https://github.com/kagenouReal/Kobeni-MD
 ${captionText}`;
 let jpegBuf = "";
 let thumbData = {}, iconData = {};
@@ -349,7 +349,7 @@ await Promise.all(tasks);
 let content = {
 extendedTextMessage: {
 text: finalText,
-matchedText: "https://github.com/kagenouReal/MBG-MD",
+matchedText: "https://github.com/kagenouReal/Kobeni-MD",
 description: "ɢɪᴛʜᴜʙ.ᴄᴏᴍ/ᴋᴀɢᴇɴᴏᴜʀᴇᴀʟ",
 previewType: 1,
 renderLargerThumbnail: true,
