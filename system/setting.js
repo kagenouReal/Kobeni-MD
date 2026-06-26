@@ -1,6 +1,7 @@
 //========KAGENOU========
 global.prefix = [".", "!", "/", "👙", "😹", "🗿"];
 global.owner = "601112260297";
+global.useOwnerToPair = true;
 global.usePairingCode = true;
 global.pairingcode = "MBGBOTZZ";
 //======================

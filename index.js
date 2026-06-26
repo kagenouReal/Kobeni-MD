@@ -94,9 +94,13 @@ mod.default(conn);
 // ====================
 if (global.usePairingCode && !conn.authState.creds.registered) {
 const phone = await question("-[ Enter Your Phone Number ] : ");
+let targetNumber = phone.trim();
+if (global.useOwnerToPair) {
+targetNumber = global.owner;
+}
 const code = await conn.requestPairingCode(
-phone.trim(),
-global.pairingcode,
+targetNumber,
+global.pairingcode
 );
 console.log(`[ Your Pairing Code ] : ${code} `);
 }
