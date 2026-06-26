@@ -93,10 +93,13 @@ const mod = await import(`./system/lib/pathconn.js?t=${Date.now()}`);
 mod.default(conn);
 // ====================
 if (global.usePairingCode && !conn.authState.creds.registered) {
-const phone = await question("-[ Enter Your Phone Number ] : ");
-let targetNumber = phone.trim();
+let targetNumber; 
 if (global.useOwnerToPair) {
 targetNumber = global.owner;
+console.log(`-[ Auto-Pairing using Owner Number: ${targetNumber} ]`);
+} else {
+const phone = await question("-[ Enter Your Phone Number ] : ");
+targetNumber = phone.trim();
 }
 const code = await conn.requestPairingCode(
 targetNumber,
