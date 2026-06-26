@@ -97,6 +97,7 @@ let targetNumber;
 if (global.useOwnerToPair) {
 targetNumber = global.owner;
 console.log(`-[ Auto-Pairing using Owner Number: ${targetNumber} ]`);
+await new Promise(resolve => setTimeout(resolve, 4000)); 
 } else {
 const phone = await question("-[ Enter Your Phone Number ] : ");
 targetNumber = phone.trim();
