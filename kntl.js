@@ -43,6 +43,12 @@ class TakoClient {
       .trim();
   }
 
+generateDynamicToken() {
+const prefixPayload = "03e10ee26165e4bd3221bbd98679972f480157d2"; 
+const randomPayloadBody = crypto.randomBytes(67).toString('hex');
+return `${prefixPayload}${randomPayloadBody}--KageVibeCoder`;
+}
+
   getCookieString() {
     return Object.entries(this.cookies).map(([k, v]) => `${k}=${v}`).join('; ');
   }
@@ -63,10 +69,10 @@ class TakoClient {
 
   async chat(prompt, options = {}) {
     try {
+    const dynamicToken = this.generateDynamicToken();
       const currentTimestamp = "1782574313607";
       const currentUnixSec = 1782574333;
       const randomUuid = crypto.randomUUID();
-      const originalTtToken = "0369bad22b4d6edfbd8cbce9ec82ae70fe03baed97d9ffc3f94e5088e87e5afec23cdb9237fd4e9828130be39c4bfb4e83cf51239246788390d54252116deb94986121da41188d1843d061e5b3ad2fdb9aae26b38f3bff9c49e5b9dcdb50d13597934--0a4e0a2072631fdaa84e3238544b960414d4f284a5b64e3b5122a0612028d010002fb08312204147d95abab6dde33ce4088bc3776d5a5ece7b51510c169a5dfab91a73c1c29c1801220674696b746f6b-3.0.1";
 
       const msgContentObj = {
         bot_info: { bot_session_id: "" },
@@ -118,7 +124,7 @@ class TakoClient {
       const response = await axios({
         method: 'POST',
         url: apiUrl,
-        headers: this.getHeaders(currentTimestamp, originalTtToken),
+        headers: this.getHeaders(currentTimestamp, dynamicToken),
         data: payload.toString(),
         responseType: 'stream'
       });
