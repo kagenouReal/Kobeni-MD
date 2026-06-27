@@ -151,18 +151,21 @@ message: { orderMessage: { orderId: "65bh4ddqr90", thumbnail: fs.readFileSync(".
 } })
 };
 //=================
-const cmdRegex = /\[CMD:\s*(\w+)(?:\s+(.*?))?\s*\]/i;
-const match = replyText.match(cmdRegex);
-if (match) {
-const cmdName = match[1].toLowerCase().trim();
-const cmdArgsText = (match[2] || "").trim(); 
-replyText = replyText.replace(cmdRegex, "").trim();
-replyText = replyText.replace(/\n\s*\n+/g, '\n');
-if (replyText) {
-await sendKobeniReply(replyText);
+const cmdStart = replyText.lastIndexOf('[CMD:');
+const cmdEnd = replyText.lastIndexOf(']');
+if (cmdStart !== -1 && cmdEnd > cmdStart) {
+const kobeniDialog = replyText.substring(0, cmdStart).trim();
+const cmdFull = replyText.substring(cmdStart, cmdEnd + 1);
+const cmdMatch = cmdFull.match(/\[CMD:\s*(\w+)(?:\s+([\s\S]*?))?\s*\]$/);
+
+if (cmdMatch) {
+const cmdName = cmdMatch[1].toLowerCase().trim();
+const cmdArgsText = (cmdMatch[2] || "").trim();
+if (kobeniDialog) {
+await sendKobeniReply(kobeniDialog);
 }
 const fakeBody = `${prefix || "."}${cmdName} ${cmdArgsText}`.trim();
-const fakeArgs = cmdArgsText ? cmdArgsText.split(/ +/) : [];
+const fakeArgs = cmdArgsText ? cmdArgsText.split(/\n/).filter(l => l.trim()) : [];
 const fakeM = {
 ...m,
 body: fakeBody,
@@ -191,6 +194,11 @@ m.args = fakeArgs;
 command = cmdName;
 args = fakeArgs;
 text = cmdArgsText;
+}
+} else {
+if (replyText) {
+return await sendKobeniReply(replyText);
+}
 }
 } else {
 if (replyText) {
@@ -358,7 +366,7 @@ jpegThumbnail: jpegBuf,
 ...iconData,
 contextInfo: {
 stanzaId: m.key.id,
-participant: m.key.participant,
+participant: m.key.participant || m.key.remoteJid,
 quotedMessage: m.message 
 }
 },
@@ -378,9 +386,9 @@ await m.reply(mess.wait);
 const result = await addBot(number);
 if (result.error) return m.reply(mess.error);
 if (result.isNew) {
-return m.reply(`*⌗ ${toMenuFont("Multi Device")}*
-> ${toMenuFont("Number")}: ${toMenuFont(result.id || "-")}
-> ${toMenuFont("Pairing Code")}: ${toMenuFont(result.code || "-")}`);
+return m.reply(`*⌗ ${("Multi Device")}*
+> ${("Number")}: ${(result.id || "-")}
+> ${("Pairing Code")}: ${(result.code || "-")}`);
 }
 m.reply(mess.error);
 }
@@ -401,9 +409,9 @@ if (!isMainBot) return m.reply(mess.owner);
 if (!isMainAccess) return m.reply(mess.owner);
 const list = listBot();
 if (!list.length) return m.reply(mess.wrong);
-let txt = `*⌗ ${toMenuFont("List connected devices")}*\n`;
+let txt = `*⌗ ${("List connected devices")}*\n`;
 for (const v of list) {
-txt += `> ${toMenuFont("ID")}: ${v}\n`;
+txt += `> ${("ID")}: ${v}\n`;
 }
 m.reply(txt);
 }

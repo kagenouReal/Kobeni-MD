@@ -241,7 +241,7 @@ return canvas.toBuffer('image/png');
 }
 }
 //===================
-const handler = async (m, { conn, text, prefix, command }) => {
+let handler = async (m, {conn,isBotAdmins,isAdmins,command,args,text,isAccess,prefix,}) => {
 if (!text) {
 return m.reply(`-Example: Reply Chat ${prefix + command} (title)`);
 }

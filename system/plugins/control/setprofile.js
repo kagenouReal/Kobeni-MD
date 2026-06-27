@@ -1,9 +1,6 @@
 import {downloadContentFromMessage} from "@whiskeysockets/baileys";
 
-const handler = async (
-m,
-{ conn, isBotAdmins, isAdmins, command, args, text, isAccess, prefix },
-) => {
+let handler = async (m, {conn,isBotAdmins,isAdmins,command,args,text,isAccess,prefix,}) => {
 if (!isAccess) return m.reply(mess.owner);
 try {
 if (command === "setpp") {

@@ -14,6 +14,14 @@ console.error(err.message);
 process.on("unhandledRejection", (err) => {
 console.error(err.message);
 });
+process.on("SIGINT", () => {
+console.log("\n[ SYSTEM ] Stopping bot...");
+process.exit(0);
+});
+process.on("SIGTERM", () => {
+console.log("\n[ SYSTEM ] Stopping bot...");
+process.exit(0);
+});
 // ====================
 global.plugins = {};
 const question = (text) =>
@@ -31,14 +39,17 @@ res(ans);
 async function loadPlugins() {
 const pluginDir = path.join(import.meta.dirname, "system", "plugins");
 global.plugins = {};
-const folders = fs.readdirSync(pluginDir, { withFileTypes: true })
+try {
+const folders = (await fs.promises.readdir(pluginDir, { withFileTypes: true }))
 .filter((dirent) => dirent.isDirectory())
 .map((dirent) => dirent.name);
+
 await Promise.all(folders.map(async (folder) => {
 const folderPath = path.join(pluginDir, folder);
-const files = fs.readdirSync(folderPath, { withFileTypes: true })
+const files = (await fs.promises.readdir(folderPath, { withFileTypes: true }))
 .filter((dirent) => dirent.isFile() && dirent.name.endsWith(".js"))
 .map((dirent) => dirent.name);
+
 await Promise.all(files.map(async (file) => {
 const filePath = path.join(folderPath, file);
 try {
@@ -57,11 +68,14 @@ handler: handlerFunc,
 }
 }
 } catch (e) {
-console.error(e);
+console.error(`Error loading plugin ${file}:`, e);
 }
 }));
 }));
 console.log(`[ PLUGIN ] Total ${Object.keys(global.plugins).length} commands loaded.`);
+} catch (err) {
+console.error("Error reading plugin directory:", err);
+}
 }
 // ====================
 let mainHandler;
@@ -140,19 +154,13 @@ return conn;
 }
 // ====================
 process.stdout.write("\x1Bc");
-console.log(`⣿⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⣿⣿⣿⣿
-⣿⠃⠀⠀⠀⠀⢀⠀⠀⠀⠀⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⣿⣿⣿
-⡏⠀⠀⠀⠀⠀⠸⡀⠀⠀⠀⣟⣣⡀⠀⠀⠀⠀⠀⠀⠀⡎⣿⣿⣿
-⡇⠀⠀⠀⠀⠀⠿⣷⠀⠀⠀⢟⠯⠉⠀⠀⠀⠀⠀⠀⠀⡇⣿⣿⣿
-⡇⠀⠀⠀⠀⢠⠀⠁⢀⠀⠀⣯⣞⣄⣐⣳⠀⠀⠀⠀⠀⢇⣿⣿⣿
-⣇⠇⠀⠀⠀⡴⢶⣾⣿⣆⠀⢹⣿⣿⣿⣿⠀⠀⠀⠀⣨⣾⣿⣿⣿
-⣿⡄⡀⠀⠀⣿⣿⣿⣿⣮⣷⣄⢽⣿⣿⡟⠀⠀⠀⣰⣿⣿⣿⣿⣿
-⣿⡇⣦⠀⡆⣮⣻⡿⣟⣽⣞⣿⣷⣿⣿⠝⠀⠀⠀⠘⣿⣿⣿⣿⣿
-⣿⣷⡽⣰⡧⢛⣯⡾⠆⠿⣿⣿⡿⢟⣵⠀⠀⠀⠠⣼⣿⣿⣿⣿⣿
-⣿⣿⣾⣟⣿⣿⣯⣤⠷⠙⠓⠒⠈⠁⠀⠀⠀⠰⣿⣿⣿⣿⣿⣿⣿
-⣿⣿⢻⣿⣷⣿⣿⣤⡶⠆⣰⣶⣶⣶⣿⡄⠠⣑⣲⣿⣿⣿⣿⣿⣿
-⣿⢣⣿⣿⣿⣿⣿⣵⡶⠶⢎⣿⣿⣿⣿⣷⠄⣔⣿⣭⣭⣭⢉⡟⣻
-⢳⣿⣿⣿⣿⣿⣿⣏⣾⣾⣿⣿⣿⣿⣿⣿⠇⣿⣿⣿⣿⢫⢎⡾⣿`);
+console.log(`
+╭╮╭━┳━━━━┳━━╮╭━━━┳━╮╱╭╮╭━━╮
+┃┃┃╭┫╭╮╭╮┃╭╮┃┃╭━━┫┃╰╮┃┃╭┫┣╮
+┃╰╯╯┃╭━━╮┃╰╯╰┫╰━━┫╭╮╰╯┃┃┃┃┃
+┃╭╮┃┃┃┃┃┃┃╭━╮┃╭━━┫┃╰╮┃┃╱┃┃╱
+┃┃┃╰┫╰━━╯┃╰━╯┃╰━━┫┃╱┃┃┃╰┫┣╯
+╰╯╰━┻━━━━┻━━━┻━━━┻╯╱╰━╯╰━━╯`);
 // ====================
 await loadPlugins();
 const pluginDir = path.join(import.meta.dirname, "system", "plugins");

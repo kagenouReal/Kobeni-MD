@@ -1,7 +1,4 @@
-const handler = async (
-m,
-{ conn, isBotAdmins, isAdmins, command, args, text, isAccess, prefix },
-) => {
+let handler = async (m, {conn,isBotAdmins,isAdmins,command,args,text,isAccess,prefix,}) => {
 if (!isAccess) return m.reply(mess.owner);
 if (!m.quoted) return m.reply(`-Example: Reply Chat ${prefix + command} 😜`);
 try {
