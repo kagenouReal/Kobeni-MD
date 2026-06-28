@@ -1,7 +1,5 @@
 import './system/setting.js';
 import makeWASocket, {useMultiFileAuthState, DisconnectReason, fetchLatestBaileysVersion} from "@whiskeysockets/baileys";
-import pino from 'pino';
-import {Boom} from '@hapi/boom';
 import fs from 'node:fs';
 import path from 'node:path';
 import {smsg} from './system/lib/smsg.js';
@@ -32,13 +30,10 @@ bots.set(id, "loading");
 const sessionPath = path.join(BOT_DIR, id);
 if (!fs.existsSync(sessionPath)) fs.mkdirSync(sessionPath, { recursive: true });
 const { state, saveCreds } = await useMultiFileAuthState(sessionPath);
-const { version } = await fetchLatestBaileysVersion();
 const isNew = !fs.existsSync(path.join(sessionPath, 'creds.json'));
 const connectionOptions = {
-version,
 keepAliveIntervalMs: 30000,
 printQRInTerminal: !global.usePairingCode,
-logger: pino({ level: "fatal" }),
 auth: state,
 browser: ["Mac OS", "Safari", "17.0"],   
 markOnlineOnConnect: false, 
@@ -65,7 +60,10 @@ return bots.set(id, conn);
 if (connection !== 'close') return;
 bots.delete(id); 
 if (lastDisconnect?.error === 'Error: Stream Errored (unknown)') return addBot(number, true); 
-const reason = new Boom(lastDisconnect?.error)?.output?.statusCode;
+let reason =
+lastDisconnect?.error?.output?.statusCode ||
+lastDisconnect?.error?.statusCode ||
+lastDisconnect?.error?.cause?.statusCode
 const R = DisconnectReason;
 if ([R.badSession, R.loggedOut, R.connectionReplaced].includes(reason)) return delBot(id, true);
 if (isNew && !conn.authState?.creds?.registered) return delBot(id, true);

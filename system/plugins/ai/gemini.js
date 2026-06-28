@@ -68,7 +68,7 @@ await conn.sendMessage(m.chat,{ text: result.text }, { quoted: {
 key: { fromMe: false, participant: "0@s.whatsapp.net", remoteJid: "0@s.whatsapp.net"},
 message: { orderMessage: { orderId: "65bh4ddqr90", thumbnail: fs.readFileSync("./system/media/gemini.jpg"), itemCount: 999, status: "INQUIRY", surface: "CATALOG", orderTitle: "product", message: "ɢᴇᴍɪɴɪ.ɢᴏᴏɢʟᴇ.ᴄᴏᴍ/ᴀᴘᴘ", sellerJid: m.sender, token: "775BBQR0", totalAmount1000: 777, totalCurrencyCode: "MYR", contextInfo: { mentionedJid: [m.sender] } } } } })
 } catch (err) {
-console.error("Error Gemini:", err.message);
+console.error("Handler:", err.message);
 return m.reply(mess.error);
 }
 };

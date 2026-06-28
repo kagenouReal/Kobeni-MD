@@ -1,9 +1,9 @@
 //========KAGENOU========
 global.prefix = [".", "!", "/", "👙", "😹", "🗿"];
 global.owner = "601112260297";
-global.useOwnerToPair = true;
+global.useOwnerToPair = false;
 global.usePairingCode = true;
-global.pairingcode = "MBGBOTZZ";
+global.pairingcode = "KOBENIMD";
 //======================
 global.mess = {
 owner: "You’re not allowed.",

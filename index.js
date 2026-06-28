@@ -1,7 +1,5 @@
 import './system/setting.js'
 import makeWASocket, {useMultiFileAuthState, DisconnectReason, fetchLatestBaileysVersion} from "@whiskeysockets/baileys";
-import pino from "pino";
-import {Boom} from "@hapi/boom";
 import readline from "readline";
 import fs from "node:fs";
 import path from "node:path";
@@ -13,14 +11,6 @@ console.error(err.message);
 });
 process.on("unhandledRejection", (err) => {
 console.error(err.message);
-});
-process.on("SIGINT", () => {
-console.log("\n[ SYSTEM ] Stopping bot...");
-process.exit(0);
-});
-process.on("SIGTERM", () => {
-console.log("\n[ SYSTEM ] Stopping bot...");
-process.exit(0);
 });
 // ====================
 global.plugins = {};
@@ -88,12 +78,9 @@ await reloadOutdex();
 // ====================
 async function SartMBG() {
 const { state, saveCreds } = await useMultiFileAuthState(`./session`);
-const { version, isLatest } = await fetchLatestBaileysVersion();
 const connectionOptions = {
-version,
 keepAliveIntervalMs: 30000,
 printQRInTerminal: !global.usePairingCode,
-logger: pino({ level: "fatal" }),
 auth: state,
 browser: ["Mac OS", "Safari", "17.0"],
 markOnlineOnConnect: false,
@@ -126,7 +113,10 @@ console.log(`[ Your Pairing Code ] : ${code} `);
 conn.ev.on("connection.update", async ({ connection, lastDisconnect }) => {
 if (connection === "open") return console.log("-[ WhatsApp Connected! ]")
 if (connection !== "close") return
-let reason = new Boom(lastDisconnect?.error)?.output?.statusCode
+let reason =
+lastDisconnect?.error?.output?.statusCode ||
+lastDisconnect?.error?.statusCode ||
+lastDisconnect?.error?.cause?.statusCode
 console.log(`Connection closed: ${reason}`)
 if (reason === DisconnectReason.loggedOut) {
 let sess = path.join(import.meta.dirname, "./session")

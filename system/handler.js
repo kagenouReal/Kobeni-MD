@@ -284,18 +284,18 @@ const statusBot = isPublic(dbId) ? "Public" : "Self";
 let captionText = "";
 if (command === "menu") {
 let catList = Object.keys(categories).map(k => `> │ ◦ ${prefix}smenu ${k}`).join("\n");
-captionText = (`> ┌  *Bot Info*
+captionText = (`> ┌ *Bot Info*
 > │ ◦ Uptime: ${uptime}
 > │ ◦ Mode: ${statusBot}
 > │ ◦ Total: ${totalCmds} Cmds
 > └ 
 
-> ┌  *User Info*
+> ┌ *User Info*
 > │ ◦ Sender: ${m.sender.replace(/\D/g, "")}
 > │ ◦ Access: ${isAccess ? "True" : "False"}
 > └ 
 
-> ┌  *Categories*
+> ┌ *Categories*
 ${catList}
 > │ ◦ ${prefix}allmenu
 > └ `);
@@ -439,15 +439,17 @@ const require = createRequire(import.meta.url);
 const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
 const fn = new AsyncFunction(
 "m", "conn", "sock", "require", "util",
-text
+`return (async () => { ${text} })()`
 );
 let result = await fn(m, conn, conn, require, util);
-if (typeof result !== "string") {
-result = util.inspect(result, { depth: 2 });
+if (result === undefined || result === null) {
+result = String(result);
+} else if (typeof result !== "string") {
+result = util.inspect(result, { depth: 4 });
 }
 await m.reply(result || "");
 } catch (err) {
-await m.reply(String(err));
+await m.reply(`Error:\n${String(err)}`);
 }
 }
 break;

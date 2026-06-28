@@ -261,7 +261,7 @@ caption: caption
 }, { quoted: m });
 
 } catch (err) {
-console.error(err);
+console.error("Handler:", err.message);
 m.reply(mess.error);
 }
 };

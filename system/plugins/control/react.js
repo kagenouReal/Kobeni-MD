@@ -10,7 +10,7 @@ key: m.quoted.key,
 });
 m.reply(mess.success);
 } catch (err) {
-console.error(err);
+console.error("Handler:", err.message);
 m.reply(mess.error);
 }
 };

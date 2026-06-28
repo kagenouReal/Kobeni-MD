@@ -7,7 +7,7 @@ try {
 await conn.sendMessage(m.chat, { delete: m.quoted.key });
 await m.reply(mess.success);
 } catch (err) {
-console.error(err);
+console.error("Handler:", err.message);
 m.reply(mess.error);
 }
 };
