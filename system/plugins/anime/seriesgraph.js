@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { createCanvas, loadImage } from 'canvas';
-//======================
+//=================
 class SeriesGraph {
 constructor() {
 this.showId = null;
@@ -240,7 +240,7 @@ ctx.beginPath(); ctx.moveTo(x + 20, avgRowY + cellHeight - 6); ctx.lineTo(x + ce
 return canvas.toBuffer('image/png');
 }
 }
-//===================
+//=================
 let handler = async (m, {conn,isBotAdmins,isAdmins,command,args,text,isAccess,prefix,}) => {
 if (!text) {
 return m.reply(`-Example: Reply Chat ${prefix + command} (title)`);
@@ -250,21 +250,22 @@ await m.reply(mess.wait);
 const seriesGraph = new SeriesGraph();
 await seriesGraph.fetch(text); 
 const imageBuffer = await seriesGraph.renderImage();
-const caption = `> *Series Graph: ${seriesGraph.title}*\n\n`
-+ `> *Global Rating:* ${seriesGraph.detail.vote_average || 'N/A'}\n`
-+ `> *First Air:* ${seriesGraph.detail.first_air_date || 'N/A'}\n`
-+ `> *Status:* ${seriesGraph.detail.status || 'N/A'}\n\n`
-+ `_Chart by: ${seriesGraph.userName}_`;
+const caption = `*⌗ Series Graph*
+> *Title:* ${seriesGraph.title}
+> *Global Rating:* ${seriesGraph.detail.vote_average || 'N/A'}
+> *First Air:* ${seriesGraph.detail.first_air_date || 'N/A'}
+> *Status:* ${seriesGraph.detail.status || 'N/A'}
+
+_Chart by: ${seriesGraph.userName}_`;
 await conn.sendMessage(m.chat, { 
 image: imageBuffer, 
 caption: caption 
 }, { quoted: m });
-
 } catch (err) {
 console.error("Handler:", err.message);
 m.reply(mess.error);
 }
 };
-
+//=================
 handler.command = ["sgraph"];
 export default handler;

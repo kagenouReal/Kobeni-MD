@@ -11,6 +11,6 @@ console.error("Handler:", err.message);
 m.reply(mess.error);
 }
 };
-
+//=================
 handler.command = ["delete", "del"];
 export default handler;

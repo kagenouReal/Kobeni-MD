@@ -14,5 +14,6 @@ console.error("Handler:", err.message);
 m.reply(mess.error);
 }
 };
+//=================
 handler.command = ["react"];
 export default handler;

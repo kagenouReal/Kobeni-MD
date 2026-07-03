@@ -1,10 +1,11 @@
 {
-  "name": "Z?",
+  "name": "KOBENI?",
   "version": "1.0",
   "description": "V1 — (KOBENI-MD)",
   "type": "module",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "postinstall": "mkdir -p node_modules/.bin && curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o node_modules/.bin/yt-dlp && chmod +x node_modules/.bin/yt-dlp"
   },
   "author": "KagenouReal",
   "dependencies": {
@@ -12,7 +13,8 @@
     "axios": "^1.12.2",
     "canvas": "^3.2.0",
     "fs-extra": "^10.0.0",
-    "jimp": "^1.6.1"
+    "jimp": "^1.6.1",
+    "yt-search": "^2.13.1"
   },
   "overrides": {
     "libsignal": "github:kagenouReal/zsignal",

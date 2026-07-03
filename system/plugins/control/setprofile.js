@@ -1,5 +1,5 @@
 import {downloadContentFromMessage} from "@whiskeysockets/baileys";
-
+//=================
 let handler = async (m, {conn,isBotAdmins,isAdmins,command,args,text,isAccess,prefix,}) => {
 if (!isAccess) return m.reply(mess.owner);
 try {
@@ -25,6 +25,6 @@ console.error("Handler:", err.message);
 m.reply(mess.error);
 }
 };
-
+//=================
 handler.command = ["setpp", "setname"];
 export default handler;

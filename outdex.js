@@ -3,13 +3,13 @@ import makeWASocket, {useMultiFileAuthState, DisconnectReason, fetchLatestBailey
 import fs from 'node:fs';
 import path from 'node:path';
 import {smsg} from './system/lib/smsg.js';
-// ====================
+//=================
 const BOT_DIR = path.join(import.meta.dirname, 'session', 'bots');
 if (!fs.existsSync(BOT_DIR)) {
 fs.mkdirSync(BOT_DIR, { recursive: true });
 }
 const bots = new Map();
-// ====================
+//=================
 let mainHandler;
 let pathConnHandler;
 async function reloadOutdex() {
@@ -18,7 +18,7 @@ mainHandler = modWA.default;
 const modPath = await import(`file://${path.join(import.meta.dirname, 'system', 'lib', 'pathconn.js')}?t=${Date.now()}`);
 pathConnHandler = modPath.default;
 }
-// ====================
+//=================
 async function addBot(number, forceStart = false) {
 const id = number.replace(/[^0-9]/g, "");
 const mainNum = getMainNumber();
@@ -43,7 +43,7 @@ getMessage: async () => ({ conversation: 'kyahh' })
 const conn = makeWASocket(connectionOptions);
 conn.isClone = true;
 if (pathConnHandler) pathConnHandler(conn);
-// ====================
+//=================
 let pairingCode = "";
 if (isNew && !conn.authState.creds.registered) {
 await new Promise(resolve => setTimeout(resolve, 3000)); 
@@ -51,7 +51,7 @@ try {
 pairingCode = await conn.requestPairingCode(number.trim(), global.pairingcode || "");
 } catch (e) {}
 }
-// ====================
+//=================
 conn.ev.on('connection.update', async ({ connection, lastDisconnect }) => {
 if (connection === 'open') {
 console.log(`-[ ${id} Connected! ]`);
@@ -69,7 +69,7 @@ if ([R.badSession, R.loggedOut, R.connectionReplaced].includes(reason)) return d
 if (isNew && !conn.authState?.creds?.registered) return delBot(id, true);
 return addBot(number, true); 
 });
-// ====================
+//=================
 conn.ev.on("messages.upsert", async ({ messages, type }) => {
 if (type !== "notify") return;
 const msg = messages[0];
@@ -81,11 +81,11 @@ await mainHandler(conn, m, msg);
 console.error(e);
 }
 });
-// ====================
+//=================
 conn.ev.on('creds.update', saveCreds);
 return { conn, code: pairingCode, id, isNew };
 }
-// ====================
+//=================
 function delBot(id, isAuto = false) {
 const sessionPath = path.join(import.meta.dirname, 'session', 'bots', id);
 const databaseDir = path.join(import.meta.dirname, 'system', 'database');
@@ -127,11 +127,11 @@ fs.unlinkSync(filePath);
 }, 2000);
 return true;
 }
-// ====================
+//=================
 function listBot() {
 return [...bots.keys()];
 }
-// ====================
+//=================
 function getMainNumber() {
 try {
 const creds = fs.readJsonSync(path.join(import.meta.dirname, 'session', 'creds.json'));
@@ -140,7 +140,7 @@ return creds.me.id.split(':')[0];
 return null;
 }
 }
-// ====================
+//=================
 async function startAllBot() {
 if (!fs.existsSync(BOT_DIR)) return;
 const folders = fs.readdirSync(BOT_DIR, { withFileTypes: true })
@@ -157,5 +157,5 @@ console.log(`[ ${id} ] Error AutoStart:`, e);
 }
 }));
 }
-// ====================
+//=================
 export { addBot, delBot, listBot, startAllBot, reloadOutdex };

@@ -1,6 +1,6 @@
 import fs from "fs-extra";
 import path from "node:path";
-//==============
+//=================
 const dir = "./system/database";
 fs.ensureDirSync(dir); 
 const dbCache = new Map();
@@ -66,4 +66,5 @@ return res.public;
 return true; 
 };
 const get = (botId) => load(botId);
+//=================
 export { addAccessUser, delAccessUser, setPublic, isPublic, get };

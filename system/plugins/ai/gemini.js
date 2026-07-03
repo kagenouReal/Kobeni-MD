@@ -1,6 +1,6 @@
 import axios from "axios";
 import fs from "fs-extra";
-//===============
+//=================
 class GeminiClient {
 headers(extra = {}) {
 return {
@@ -54,7 +54,7 @@ res.data.on("error", reject);
 });
 }
 }
-//===============
+//=================
 let handler = async (m, { conn, isBotAdmins, isAdmins, command, args, text, isAccess, prefix }) => {
 if (!text) return m.reply(`-Example: ${prefix + command} (text)`);
 await m.reply(mess.wait);
@@ -72,5 +72,6 @@ console.error("Handler:", err.message);
 return m.reply(mess.error);
 }
 };
+//=================
 handler.command = ["gemini"];
 export default handler;

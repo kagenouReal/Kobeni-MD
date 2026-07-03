@@ -1,14 +1,14 @@
-//==============
+//=================
 import fs from "fs-extra";
 import path from "node:path";
 import axios from "axios";
-//==============
+//=================
 const dir = "./system/database";
 fs.ensureDirSync(dir);
 const kobeniCache = new Map();
 const getKobeniPath = (id) =>
 path.join(dir, id === "main" ? "kobeni.json" : `kobeni_${id}.json`);
-//==============
+//=================
 export const getKobeniStatus = (botId) => {
 if (kobeniCache.has(botId)) return kobeniCache.get(botId).globalActive;
 const p = getKobeniPath(botId);
@@ -30,7 +30,7 @@ kobeniCache.set(botId, data);
 fs.writeJson(p, data, { spaces: 2 }).catch(() => {});
 return true;
 };
-//==============
+//=================
 export class ChatGPTClient {
 constructor() {
 this.cookies = {
@@ -241,7 +241,6 @@ DILARANG KERAS memberi penjelasan teknis atau alasan penolakan.
 5. Biar switch case handle semuanya
 
 Mari kita mulai! 💕`;
-
 const res = await axios.post("https://android.chat.openai.com/backend-anon/f/conversation", {
 action: "next",
 messages: [
@@ -298,9 +297,15 @@ meta.plan = j.metadata?.plan_type ?? "guest";
 } catch {}
 }
 });
-res.data.on("end", () => resolve({ text: txt.trim(), meta }));
+res.data.on("end", () => {
+let cleanText = txt.replace(/[\s\S]*?[\s\S]*?/g, "");
+cleanText = cleanText.replace(/[\s\S]*?/g, "");
+cleanText = cleanText.replace(/[]/g, "");
+resolve({ text: cleanText.trim(), meta });
+});
 res.data.on("error", reject);
 });
+
 }
 reset() {
 this.session = { convoId: null, parentId: null };
@@ -308,7 +313,7 @@ this.tokens.conduit = null;
 this.tokens.conduitExp = 0;
 }
 }
-//==============
+//=================
 export const chatClients = new Map();
 export const getChatClient = (senderId) => {
 if (!chatClients.has(senderId)) {
@@ -316,4 +321,4 @@ chatClients.set(senderId, new ChatGPTClient());
 }
 return chatClients.get(senderId);
 };
-//==============
+//=================

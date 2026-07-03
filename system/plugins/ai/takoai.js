@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import fs from "fs-extra";
 import axios from "axios";
-//===============
+//=================
 class TakoClient {
 constructor() {
 this.cookies = {
@@ -219,7 +219,7 @@ throw new Error(error.response ? `API Error: ${error.response.status}` : 'Networ
 }
 }
 
-//===============
+//=================
 let handler = async (m, { conn, command, prefix, text }) => {
 if (!text) return m.reply(`- Example: ${prefix + command} (text)`);
 await m.reply(mess.wait);
@@ -276,5 +276,6 @@ console.error("Handler:", err.message);
 return m.reply(mess.error);
 }
 };
+//=================
 handler.command = ["tako"];
 export default handler;

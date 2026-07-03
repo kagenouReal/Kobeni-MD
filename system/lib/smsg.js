@@ -1,6 +1,6 @@
-//==============
+//=================
 import {jidNormalizedUser, proto, getContentType, areJidsSameUser} from "@whiskeysockets/baileys";
-//==============
+//=================
 export function smsg(conn, m, store) {
 if (!m) return m;
 const M = proto.WebMessageInfo;
@@ -37,7 +37,7 @@ m.sender ||
 }
 m.sender = sender;
 }
-//=====================//
+//=================
 if (m.message) {
 m.mtype = getContentType(m.message);
 m.msg =
@@ -139,7 +139,7 @@ conn.copyNForward(jid, vM, forceForward, options);
 m.quoted.download = () => conn.downloadMediaMessage(m.quoted);
 }
 }
-//=====================//
+//=================
 if (m.msg.url) m.download = () => conn.downloadMediaMessage(m.msg);
 m.text =
 m.msg.text ||
@@ -158,7 +158,7 @@ m.copyNForward = (jid = m.chat, forceForward = false, options = {}) =>
 conn.copyNForward(jid, m, forceForward, options);
 return m;
 }
-//==============
+//=================
 export function getGroupAdmins(participants) {
 const admins = [];
 for (const i of participants) {
@@ -169,4 +169,4 @@ if (i.phoneNumber) admins.push(i.phoneNumber);
 }
 return admins;
 }
-//==============
+//=================

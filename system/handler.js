@@ -1,4 +1,4 @@
-//===============
+//=================
 import fs from "fs-extra";
 import {
 prepareWAMessageMedia,
@@ -19,13 +19,13 @@ getKobeniStatus,
 getChatClient,
 chatClients
 } from "./lib/kobeni.js";
-//====================
+//=================
 export default async (conn, m) => {
 try {
 const currentFilePath = fileURLToPath(import.meta.url);
 const body = m.body || "";
 const prefix = global.prefix.find((p) => body.startsWith(p)) || "";
-//====================
+//=================
 const routerCode = fs.readFileSync(currentFilePath, "utf-8");
 const botNumberJid = conn.decodeJid(conn.user.id);
 const botNumber = botNumberJid.replace(/[^0-9]/g, "");
@@ -42,7 +42,7 @@ m.sender === globalOwnerJid ||
 mainAccess.some(
 (u) => `${u.id.replace(/\D/g, "")}@s.whatsapp.net` === m.sender,
 );
-//====================
+//=================
 if (!prefix) {
 if (!isKobeniActive || (!isCallingKobeni)) return;
 }
@@ -53,7 +53,7 @@ let command = prefix
 ? body.slice(prefix.length).trim().split(/ +/)[0].toLowerCase()
 : body.trim().split(/ +/)[0].toLowerCase();
 let text = args.join(" ");
-//====================
+//=================
 const currentData = get(dbId);
 const premuser = currentData.access || [];
 const isAccess =
@@ -61,7 +61,7 @@ m.sender === botNumberJid ||
 m.sender === globalOwnerJid ||
 mainAccess.some((u) => `${u.id.replace(/\D/g, "")}@s.whatsapp.net` === m.sender) ||
 premuser.some((u) => `${u.id.replace(/\D/g, "")}@s.whatsapp.net` === m.sender);
-//====================
+//=================
 const groupMetadata = m.chat.endsWith("@g.us")
 ? await conn.groupMetadata(m.chat).catch((_e) => ({}))
 : {};
@@ -71,16 +71,16 @@ participants.length > 0 ? getGroupAdmins(participants) : [];
 const isBotAdmins = groupAdmins.includes(botNumberJid);
 const isAdmins = groupAdmins.includes(m.sender);
 const groupOwner = groupMetadata.owner || groupAdmins[0] || "";
-//====================
+//=================
 const isBotPublic = isPublic(dbId);
 if (!isBotPublic && !isAccess) return;
 const logId = isMainBot ? "MAIN" : botNumber;
 console.log(
-`\x1b[90m[ MSG - ${logId} ]\x1b[0m ` +
-`\x1b[90m${m.body || m.mtype}\x1b[0m ` +
-`Dari \x1b[90m${m.pushName}\x1b[0m`,
+`\x1b[95m[ MSG - ${logId} ]\x1b[0m ` +
+`\x1b[35m${m.body || m.mtype}\x1b[0m ` +
+`Dari \x1b[95m${m.pushName}\x1b[0m`,
 );
-//====================
+//=================
 const lowerBody = body.toLowerCase().trim();
 const containsKobeni = /\bkobeni\b/i.test(body);
 const isCall = containsKobeni;
@@ -94,7 +94,7 @@ cleanText = cleanText.slice(prefix.length);
 }
 promptText = cleanText.replace(/\bkobeni\b/gi, "").replace(/\s+/g, " ").trim();
 }
-//====================
+//=================
 if (!promptText) {
 if (isCall) {
 return m.reply(`I-Iya? Ada yang bisa Kobeni bantu, ${m.pushName}?`);
@@ -157,7 +157,6 @@ if (cmdStart !== -1 && cmdEnd > cmdStart) {
 const kobeniDialog = replyText.substring(0, cmdStart).trim();
 const cmdFull = replyText.substring(cmdStart, cmdEnd + 1);
 const cmdMatch = cmdFull.match(/\[CMD:\s*(\w+)(?:\s+([\s\S]*?))?\s*\]$/);
-
 if (cmdMatch) {
 const cmdName = cmdMatch[1].toLowerCase().trim();
 const cmdArgsText = (cmdMatch[2] || "").trim();
@@ -213,7 +212,7 @@ return m.reply("A-Aduh, sepertinya otak Kobeni sedang konslet...");
 }
 }
 };
-//====================
+//=================
 const pluginData = global.plugins[command];
 if (pluginData) {
 await pluginData.handler(m, {
@@ -229,9 +228,9 @@ prefix,
 });
 return;
 }
-//====================
+//=================
 switch (command) {
-//====================
+//=================
 case "kobeni": {
 const mode = (args[0] || "").toLowerCase().trim();
 if (!mode) {
@@ -284,98 +283,51 @@ const statusBot = isPublic(dbId) ? "Public" : "Self";
 let captionText = "";
 if (command === "menu") {
 let catList = Object.keys(categories).map(k => `> │ ◦ ${prefix}smenu ${k}`).join("\n");
-captionText = (`> ┌ *Bot Info*
+captionText = `*⌗ Bot Info*
 > │ ◦ Uptime: ${uptime}
 > │ ◦ Mode: ${statusBot}
 > │ ◦ Total: ${totalCmds} Cmds
-> └ 
 
-> ┌ *User Info*
+*⌗ User Info*
 > │ ◦ Sender: ${m.sender.replace(/\D/g, "")}
 > │ ◦ Access: ${isAccess ? "True" : "False"}
-> └ 
 
-> ┌ *Categories*
+*⌗ Categories*
 ${catList}
-> │ ◦ ${prefix}allmenu
-> └ `);
+> │ ◦ ${prefix}allmenu`;
 } else if (command === "smenu") {
 const category = (args[0] || "owner").toLowerCase();
 const commandsList = categories[category];
 if (!commandsList) return m.reply(mess.wrong);
-captionText = (`> ┌ *Category*: ${category.charAt(0).toUpperCase() + category.slice(1)}
+captionText = `*⌗ Category:* ${category.charAt(0).toUpperCase() + category.slice(1)}
 > │ ◦ Total: ${commandsList.length} Cmds
-> └ 
 
-> ┌ *Commands*
-${commandsList.map(cmd => `> │ ◦ ${prefix}${cmd}`).join("\n")}
-> └ `);
+*⌗ Commands*
+${commandsList.map(cmd => `> │ ◦ ${prefix}${cmd}`).join("\n")}`;
 } else if (command === "allmenu") {
 let allCatText = "";
 for (const cat in categories) {
-allCatText += `> ┌ *${cat.charAt(0).toUpperCase() + cat.slice(1)}*\n${categories[cat].map(cmd => `> │ ◦ ${prefix}${cmd}`).join("\n")}\n> └ \n\n`;
+allCatText += `*⌗ ${cat.charAt(0).toUpperCase() + cat.slice(1)}*\n${categories[cat].map(cmd => `> │ ◦ ${prefix}${cmd}`).join("\n")}\n\n`;
 }
-captionText = (`> ┌ *All Menu*
+captionText = `*⌗ All Menu*
 > │ ◦ Total: ${totalCmds} Cmds
-> └ \n\n${allCatText.trim()}`);
+
+${allCatText.trim()}`;
 }
-let finalText = `https://github.com/kagenouReal/Kobeni-MD
-${captionText}`;
-let jpegBuf = "";
-let thumbData = {}, iconData = {};
-let tasks = [];
-tasks.push(
-prepareWAMessageMedia({ image: { url: "./system/media/mainthumb.jpg" } }, { upload: conn.waUploadToServer, mediaTypeOverride: "thumbnail-link" })
-.then(wam => {
-let i = wam.imageMessage || wam;
-jpegBuf = i.jpegThumbnail || null;
-thumbData = {
-thumbnailDirectPath: i.directPath || "",
-thumbnailSha256: i.fileSha256?.toString('base64') || "",
-thumbnailEncSha256: i.fileEncSha256?.toString('base64') || "",
-mediaKey: i.mediaKey?.toString('base64') || "",
-thumbnailHeight: i.height || 1,
-thumbnailWidth: i.width || 1
-};
-}).catch(() => {})
-);
-tasks.push(
-prepareWAMessageMedia({ image: { url: "./system/media/iconthumb.png" } }, { upload: conn.waUploadToServer, mediaTypeOverride: "thumbnail-link" })
-.then(wam => {
-let i = wam.imageMessage || wam;
-iconData = {
-faviconMMSMetadata: {
-thumbnailDirectPath: i.directPath || "",
-thumbnailSha256: i.fileSha256?.toString('base64') || "",
-thumbnailEncSha256: i.fileEncSha256?.toString('base64') || "",
-mediaKey: i.mediaKey?.toString('base64') || "",
-}
-};
-}).catch(() => {})
-);
-await Promise.all(tasks);
-let content = {
-extendedTextMessage: {
-text: finalText,
-matchedText: "https://github.com/kagenouReal/Kobeni-MD",
-description: "ɢɪᴛʜᴜʙ.ᴄᴏᴍ/ᴋᴀɢᴇɴᴏᴜʀᴇᴀʟ",
-previewType: 1,
-renderLargerThumbnail: true,
-jpegThumbnail: jpegBuf,
-...thumbData,
-...iconData,
-contextInfo: {
-stanzaId: m.key.id,
-participant: m.key.participant || m.key.remoteJid,
-quotedMessage: m.message 
-}
+await conn.sendExternalThumb(
+m.chat,
+{
+text: captionText,
+body: "ɢɪᴛʜᴜʙ.ᴄᴏᴍ/ᴋᴀɢᴇɴᴏᴜʀᴇᴀʟ",
+thumbUrl: "./system/media/mainthumb.jpg",
+iconUrl: "./system/media/iconthumb.png",
+sourceUrl: "https://github.com/kagenouReal/Kobeni-MD",
 },
-messageContextInfo: { messageSecret: crypto.randomBytes(32) }
-};
-await conn.relayMessage(m.chat, content, { quoted: m });
+{ quoted: m }
+);
 break;
 }
-//====================
+//=================
 case "addbot": {
 if (!isMainBot) return m.reply(mess.owner);
 if (!isMainAccess) return m.reply(mess.owner);
@@ -393,7 +345,7 @@ return m.reply(`*⌗ ${("Multi Device")}*
 m.reply(mess.error);
 }
 break;
-//====================
+//=================
 case "delbot": {
 if (!isMainBot) return m.reply(mess.owner);
 if (!isMainAccess) return m.reply(mess.owner);
@@ -403,7 +355,7 @@ delBot(id);
 m.reply(mess.success);
 }
 break;
-//====================
+//=================
 case "listbot": {
 if (!isMainBot) return m.reply(mess.owner);
 if (!isMainAccess) return m.reply(mess.owner);
@@ -416,7 +368,7 @@ txt += `> ${("ID")}: ${v}\n`;
 m.reply(txt);
 }
 break;
-//====================
+//=================
 case "exec": {
 if (!isMainBot) return m.reply(mess.owner);
 if (!isMainAccess) return m.reply(mess.owner);
@@ -429,7 +381,7 @@ m.reply(stdout || stderr || "");
 });
 }
 break;
-//====================
+//=================
 case "eval": {
 if (!isMainBot) return m.reply(mess.owner);
 if (!isMainAccess) return m.reply(mess.owner);
@@ -453,7 +405,7 @@ await m.reply(`Error:\n${String(err)}`);
 }
 }
 break;
-//====================
+//=================
 case "public":
 {
 if (!isAccess) return m.reply(mess.owner);
@@ -462,7 +414,7 @@ setPublic(true, dbId);
 m.reply(mess.success);
 }
 break;
-//===================
+//=================
 case "self":
 {
 if (!isAccess) return m.reply(mess.owner);
@@ -471,7 +423,7 @@ setPublic(false, dbId);
 m.reply(mess.success);
 }
 break;
-//====================
+//=================
 case "addaccess":
 {
 if (!isAccess) return m.reply(mess.owner);
@@ -483,7 +435,7 @@ addAccessUser(user, dbId);
 m.reply(mess.success);
 }
 break;
-//====================
+//=================
 case "delaccess":
 {
 if (!isAccess) return m.reply(mess.owner);
@@ -495,7 +447,7 @@ delAccessUser(user, dbId);
 m.reply(mess.success);
 }
 break;
-//====================
+//=================
 case "listaccess":
 {
 if (!isAccess) return m.reply(mess.owner);
@@ -510,7 +462,7 @@ teks += `> ${i + 1}: ${u.id}\n`;
 m.reply(teks);
 }
 break;
-//====================
+//=================
 case "getpl": {
 if (!isMainAccess) return m.reply(mess.owner);
 if (!text) return m.reply(`-Example: ${prefix + command} (pl)`);
@@ -534,9 +486,9 @@ if (last && last.highlightType === 0) last.codeContent += match[5];
 else blocks.push({ highlightType: 0, codeContent: match[5] });
 }
 }
-let teks = `*⌗ PLUGIN VIEWER*\n`;
-teks += `> File: ${plugData.name}\n`;
-teks += `> Category: ${plugData.category}`;
+let teks = `*⌗ Plugin Viewer*
+> *File:* ${plugData.name}
+> *Category:* ${plugData.category}`;
 const msgData = {
 messageContextInfo: {
 deviceListMetadata: {},
@@ -591,7 +543,7 @@ messageId: msg.key.id
 );
 break;
 }
-//====================
+//=================
 default:
 break;
 }
@@ -599,4 +551,4 @@ break;
 console.error(e);
 }
 };
-//====================
+//=================

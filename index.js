@@ -5,14 +5,14 @@ import fs from "node:fs";
 import path from "node:path";
 import {startAllBot, reloadOutdex} from "./outdex.js";
 import {smsg} from "./system/lib/smsg.js";
-// ====================
+//=================
 process.on("uncaughtException", (err) => {
 console.error(err.message);
 });
 process.on("unhandledRejection", (err) => {
 console.error(err.message);
 });
-// ====================
+//=================
 global.plugins = {};
 const question = (text) =>
 new Promise((res) => {
@@ -25,7 +25,7 @@ rl.close();
 res(ans);
 });
 });
-// ====================
+//=================
 async function loadPlugins() {
 const pluginDir = path.join(import.meta.dirname, "system", "plugins");
 global.plugins = {};
@@ -33,13 +33,11 @@ try {
 const folders = (await fs.promises.readdir(pluginDir, { withFileTypes: true }))
 .filter((dirent) => dirent.isDirectory())
 .map((dirent) => dirent.name);
-
 await Promise.all(folders.map(async (folder) => {
 const folderPath = path.join(pluginDir, folder);
 const files = (await fs.promises.readdir(folderPath, { withFileTypes: true }))
 .filter((dirent) => dirent.isFile() && dirent.name.endsWith(".js"))
 .map((dirent) => dirent.name);
-
 await Promise.all(files.map(async (file) => {
 const filePath = path.join(folderPath, file);
 try {
@@ -58,7 +56,7 @@ handler: handlerFunc,
 }
 }
 } catch (e) {
-console.error(`Error loading plugin ${file}:`, e);
+console.error(`Error load plugin ${file}:`, e);
 }
 }));
 }));
@@ -67,7 +65,7 @@ console.log(`[ PLUGIN ] Total ${Object.keys(global.plugins).length} commands loa
 console.error("Error reading plugin directory:", err);
 }
 }
-// ====================
+//=================
 let mainHandler;
 async function loadMainHandler() {
 const mod = await import(`./system/handler.js?t=${Date.now()}`);
@@ -75,7 +73,7 @@ mainHandler = mod.default;
 }
 await loadMainHandler();
 await reloadOutdex(); 
-// ====================
+//=================
 async function SartMBG() {
 const { state, saveCreds } = await useMultiFileAuthState(`./session`);
 const connectionOptions = {
@@ -92,7 +90,7 @@ return { conversation: "kyahh" };
 const conn = makeWASocket(connectionOptions);
 const mod = await import(`./system/lib/pathconn.js?t=${Date.now()}`);
 mod.default(conn);
-// ====================
+//=================
 if (global.usePairingCode && !conn.authState.creds.registered) {
 let targetNumber; 
 if (global.useOwnerToPair) {
@@ -109,7 +107,7 @@ global.pairingcode
 );
 console.log(`[ Your Pairing Code ] : ${code} `);
 }
-// ====================
+//=================
 conn.ev.on("connection.update", async ({ connection, lastDisconnect }) => {
 if (connection === "open") return console.log("-[ WhatsApp Connected! ]")
 if (connection !== "close") return
@@ -126,7 +124,7 @@ process.exit()
 setTimeout(SartMBG, 3000)
 }
 })
-// ====================
+//=================
 conn.ev.on("messages.upsert", async ({ messages, type }) => {
 if (type !== "notify") return;
 const msg = messages[0];
@@ -138,11 +136,11 @@ await mainHandler(conn, m, msg);
 console.error(e);
 }
 });
-// ====================
+//=================
 conn.ev.on("creds.update", saveCreds);
 return conn;
 }
-// ====================
+//=================
 process.stdout.write("\x1Bc");
 console.log(`
 ╭╮╭━┳━━━━┳━━╮╭━━━┳━╮╱╭╮╭━━╮
@@ -151,7 +149,7 @@ console.log(`
 ┃╭╮┃┃┃┃┃┃┃╭━╮┃╭━━┫┃╰╮┃┃╱┃┃╱
 ┃┃┃╰┫╰━━╯┃╰━╯┃╰━━┫┃╱┃┃┃╰┫┣╯
 ╰╯╰━┻━━━━┻━━━┻━━━┻╯╱╰━╯╰━━╯`);
-// ====================
+//=================
 await loadPlugins();
 const pluginDir = path.join(import.meta.dirname, "system", "plugins");
 let debounceTimeout;
@@ -170,6 +168,6 @@ console.log("[ WATCHER ] handler.js reloaded.");
 await loadMainHandler(); 
 await reloadOutdex();
 });
-// ====================
+//=================
 SartMBG();
 startAllBot();
