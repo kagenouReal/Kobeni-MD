@@ -234,13 +234,12 @@ switch (command) {
 case "kobeni": {
 const mode = (args[0] || "").toLowerCase().trim();
 if (!mode) {
-const status = isKobeniActive ? "ON" : "OFF";
 return m.reply(
-`-Status Saat Ini: *${status}*\n\n` +
-`Format Penggunaan:\n` +
-`> ${prefix + command} on\n` +
-`> ${prefix + command} off\n` +
-`> ${prefix + command} reset`
+`-Example:
+
+${prefix + command} on
+${prefix + command} off
+${prefix + command} reset`
 );
 }
 if (mode === "on") {

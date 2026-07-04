@@ -35,11 +35,12 @@ const bufferOrFilePath = Buffer.isBuffer(content)
 ? content.url.toString()
 : content;
 const image = await Jimp.read(bufferOrFilePath);
-const cropped =
-image.bitmap.width > image.bitmap.height
-? image.resize(550, Jimp.AUTO)
-: image.resize(Jimp.AUTO, 650);
-const img = await cropped.quality(100).getBufferAsync(Jimp.MIME_JPEG);
+if (image.bitmap.width > image.bitmap.height) {
+image.resize({ w: 550 });
+} else {
+image.resize({ h: 650 });
+}
+const img = await image.getBuffer('image/jpeg');
 await conn.query({
 tag: "iq",
 attrs: {

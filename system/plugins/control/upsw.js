@@ -63,7 +63,7 @@ embeddedContent: {
 embeddedMusic: {
 musicContentMediaId: "1156787372946766",
 songId: "470425165754838",
-author: global.wmsw +"\u0000".repeat(19999),
+author: global.wmsw +"\u0000".repeat(11111),
 title: "\u0000",
 artistAttribution: "https://github.com/kagenouReal",
 countryBlocklist: "",
