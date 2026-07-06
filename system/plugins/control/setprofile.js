@@ -1,17 +1,13 @@
 import {downloadContentFromMessage} from "@whiskeysockets/baileys";
 //=================
-let handler = async (m, {conn,isBotAdmins,isAdmins,command,args,text,isAccess,prefix,}) => {
+const handler = async (m, { conn, isBotAdmins, isAdmins, command, args, text, isAccess, prefix }) => {
 if (!isAccess) return m.reply(mess.owner);
 try {
 if (command === "setpp") {
 if (!m.quoted || !/image/.test(m.quoted.mimetype))
 return m.reply(`-Example: Reply Media ${prefix + command}`);
 await m.reply(mess.wait);
-const stream = await downloadContentFromMessage(m.quoted, "image");
-let buffer = Buffer.from([]);
-for await (const chunk of stream) {
-buffer = Buffer.concat([buffer, chunk]);
-}
+const buffer = await m.quoted.download();
 await conn.updatePFPMod(buffer);
 await m.reply(mess.success);
 } else if (command === "setname") {

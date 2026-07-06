@@ -220,7 +220,7 @@ throw new Error(error.response ? `API Error: ${error.response.status}` : 'Networ
 }
 
 //=================
-let handler = async (m, { conn, command, prefix, text }) => {
+const handler = async (m, { conn, isBotAdmins, isAdmins, command, args, text, isAccess, prefix }) => {
 if (!text) return m.reply(`- Example: ${prefix + command} (text)`);
 await m.reply(mess.wait);
 try {

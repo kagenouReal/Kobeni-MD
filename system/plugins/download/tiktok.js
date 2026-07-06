@@ -56,7 +56,7 @@ return null;
 }
 }
 //=================
-const handler = async (m, { conn, command, text, prefix }) => {
+const handler = async (m, { conn, isBotAdmins, isAdmins, command, args, text, isAccess, prefix }) => {
 if (!text) return m.reply(`-Example: ${prefix + command} (link)`);
 try {
 await m.reply(mess.wait);

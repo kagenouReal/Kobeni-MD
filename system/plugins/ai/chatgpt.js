@@ -132,7 +132,7 @@ this.tokens.conduitExp = 0;
 }
 }
 //=================
-let handler = async (m, { conn, prefix, command, text }) => {
+const handler = async (m, { conn, isBotAdmins, isAdmins, command, args, text, isAccess, prefix }) => {
 if (!text) return m.reply(`-Example: ${prefix + command} (text)`);
 await m.reply(mess.wait);
 try {

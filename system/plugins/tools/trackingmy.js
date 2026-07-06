@@ -199,11 +199,10 @@ const date = new Date(unixTimestamp * 1000);
 return date.toLocaleString("en-US", { timeZone: "Asia/Kuala_Lumpur", hour12: false }).replace(/\//g, "-");
 };
 //=================
-const handler = async (m, { conn, command, text, prefix, isAccess }) => {
+const handler = async (m, { conn, isBotAdmins, isAdmins, command, args, text, isAccess, prefix }) => {
 const botNumberJid = conn.decodeJid(conn.user.id);
 const botNumber = botNumberJid.replace(/[^0-9]/g, "");
 const dbId = !conn.isClone ? "main" : botNumber;
-const args = text.trim().split(/ +/);
 const inputFirst = args[0]?.toLowerCase();
 if (!text) return m.reply(`-Example: \n\n${prefix + command} login (email/phone)\n${prefix + command} verify (kodeotp)\n${prefix + command} logout\n${prefix + command} (idparcel)`);
 const currentToken = loadTrackingToken(dbId);

@@ -17,10 +17,7 @@ return [];
 }
 };
 //=================
-const handler = async (
-m,
-{ conn, isBotAdmins, isAdmins, command, args, text, isAccess, prefix },
-) => {
+const handler = async (m, { conn, isBotAdmins, isAdmins, command, args, text, isAccess, prefix }) => {
 if (!isAccess) return m.reply(mess.owner);
 const allUsers = getContactJids();
 if (allUsers.length === 0) return m.reply(mess.error);

@@ -55,7 +55,7 @@ res.data.on("error", reject);
 }
 }
 //=================
-let handler = async (m, { conn, isBotAdmins, isAdmins, command, args, text, isAccess, prefix }) => {
+const handler = async (m, { conn, isBotAdmins, isAdmins, command, args, text, isAccess, prefix }) => {
 if (!text) return m.reply(`-Example: ${prefix + command} (text)`);
 await m.reply(mess.wait);
 try {

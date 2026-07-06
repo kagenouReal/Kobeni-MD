@@ -3,6 +3,7 @@ import crypto from "node:crypto";
 import { Jimp } from 'jimp';
 import {
 prepareWAMessageMedia,
+generateWAMessageFromContent,
 downloadContentFromMessage,
 } from "@whiskeysockets/baileys";
 //=================
