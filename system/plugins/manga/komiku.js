@@ -1,7 +1,9 @@
 import { generateWAMessageFromContent, prepareWAMessageMedia } from "@whiskeysockets/baileys";
 import axios from "axios";
-let komikCache = null;
+import imageToPdf from "image-to-pdf";
+import { spawn } from "child_process";
 //=================
+const userCache = new Map();
 async function getMangaList(query) {
 try {
 const headers = { "User-Agent": "okhttp/5.3.2" };
@@ -47,56 +49,70 @@ const handler = async (m, { conn, isBotAdmins, isAdmins, command, args, text, is
 try {
 if (!text) return m.reply(`-Example: ${prefix + command} (title)`);
 if (args[0] === "read") {
-if (!komikCache) return m.reply(`-Example: ${prefix + command} (title)`);
 const idx = parseInt(args[1]);
+const mangaId = args[2];
+const userMangaData = userCache.get(m.sender);
+if (!userMangaData || !userMangaData[mangaId]) {
+return m.reply(`-Example: ${prefix + command} (title)`);
+}
+const komikCache = userMangaData[mangaId]; 
 if (isNaN(idx) || !komikCache.chapters[idx]) return m.reply(mess.error);
 await m.reply(mess.wait);
 const targetChapter = komikCache.chapters[idx];
-const imgs = await getChapterImages(targetChapter.id);
-if (!imgs.length) return m.reply(mess.error);
-const sections = imgs.map(img => ({
-view_model: {
-primitive: { 
-media: { url: img, mime_type: "image/jpeg" }, 
-imagine_type: 3, 
-status: { status: "READY" }, 
-__typename: "GenAIImaginePrimitive" 
-},
-__typename: "GenAISingleLayoutViewModel"
+const imgUrls = await getChapterImages(targetChapter.id);
+if (!imgUrls.length) return m.reply(mess.error);
+const imageBuffers = await Promise.all(
+imgUrls.map(async (url) => {
+try {
+const res = await axios.get(url, { responseType: "arraybuffer" });
+const buffer = Buffer.from(res.data, "binary");
+if (url.endsWith(".webp") || url.includes(".webp")) {
+return await new Promise((resolve) => {
+const ffmpeg = spawn("ffmpeg", [
+"-i", "pipe:0",
+"-f", "image2",
+"-vcodec", "mjpeg",
+"pipe:1"
+]);
+const chunks = [];
+ffmpeg.stdout.on("data", (chunk) => chunks.push(chunk));
+ffmpeg.stdout.on("end", () => resolve(Buffer.concat(chunks)));
+ffmpeg.on("error", () => resolve(null));
+ffmpeg.stdin.write(buffer);
+ffmpeg.stdin.end();
+});
 }
-}));
-const contextInfo = { 
-forwardingScore: 1, 
-isForwarded: true, 
-forwardedAiBotMessageInfo: { botJid: "0@bot" }, 
-forwardOrigin: 4, 
-stanzaId: m.key.id, 
-participant: m.sender || m.key.participant || m.key.remoteJid, 
-quotedMessage: m.message || { conversation: "" } 
-};
-const msgData = {
-messageContextInfo: { deviceListMetadata: {}, deviceListMetadataVersion: 2, botMetadata: {} },
-botForwardedMessage: {
-message: {
-richResponseMessage: {
-messageType: 1,
-submessages: [{ messageType: 2, messageText: `*${targetChapter.title}*\n\nTotal halaman: ${imgs.length}` }],
-unifiedResponse: { data: Buffer.from(JSON.stringify({ response_id: Math.random().toString(16).slice(2), sections })).toString("base64") },
-contextInfo
+return buffer;
+} catch {
+return null;
 }
-}
-}
-};
-const msg = generateWAMessageFromContent(m.chat, msgData, { userJid: conn.user?.id });
-await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id });
+})
+);
+const validBuffers = imageBuffers.filter(buf => buf !== null);
+if (!validBuffers.length) return m.reply(mess.error);
+const pdfBuffer = await new Promise((resolve, reject) => {
+const chunks = [];
+const stream = imageToPdf(validBuffers);
+stream.on("data", (chunk) => chunks.push(chunk));
+stream.on("end", () => resolve(Buffer.concat(chunks)));
+stream.on("error", (err) => reject(err));
+});
+const pdfName = `${komikCache.title} - ${targetChapter.title}.pdf`.replace(/[\\/:*?"<>|]/g, "");
 return await conn.sendMessage(m.chat, {
-text: "Scroll up."
-}, { quoted: msg });
+document: pdfBuffer,
+mimetype: "application/pdf",
+fileName: pdfName,
+caption: `*⌗ Komiku PDF Reader*
+> *Judul:* ${komikCache.title}
+> *Chapter:* ${targetChapter.title}`
+}, { quoted: m });
 }
 await m.reply(mess.wait);
 const meta = await getMangaList(text);
 if (!meta) return m.reply(mess.error);
-komikCache = meta;
+const currentUserCache = userCache.get(m.sender) || {};
+currentUserCache[meta.manga_id] = meta;
+userCache.set(m.sender, currentUserCache);
 const cap = `*⌗ Komiku Search*
 > *Title:* ${meta.title}
 > *Author:* ${meta.author || "-"}
@@ -109,7 +125,7 @@ const sections = [
 title: "Chapter List",
 rows: meta.chapters.map((ch, idx) => ({
 title: ch.title,
-id: `${prefix + command} read ${idx}`
+id: `${prefix + command} read ${idx} ${meta.manga_id}`
 }))
 }
 ];

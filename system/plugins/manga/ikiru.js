@@ -4,19 +4,17 @@ import * as cheerio from "cheerio";
 import imageToPdf from "image-to-pdf";
 import { spawn } from "child_process";
 //=================
-let komikCache = null;
+const userCache = new Map();
 const config = {
 url: "https://06.ikiru.wtf",
 headers: {
 "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
 "Referer": "https://06.ikiru.wtf/",
-"Origin": "https://06.ikiru.wtf",
-"Accept-Encoding": "gzip"
+"Origin": "https://06.ikiru.wtf"
 },
 cdnHeaders: {
 "Referer": "https://06.ikiru.wtf/",
-"User-Agent": "okhttp/5.2.1",
-"Accept-Encoding": "gzip"
+"User-Agent": "okhttp/5.2.1"
 }
 };
 //=================
@@ -34,6 +32,7 @@ const $ = cheerio.load(htmlSearch);
 const firstResult = $("#searchResults a").first();
 const link = firstResult.attr("href");
 if (!link || link.includes("advanced-search")) return null;
+const mangaId = link.split("/").filter(Boolean).pop() || Math.random().toString(36).slice(2, 7);
 const { data: html } = await axios.get(link, { headers: config.headers });
 const $$ = cheerio.load(html);
 let metaData = {};
@@ -72,6 +71,7 @@ link: chLink
 }
 });
 return {
+manga_id: mangaId,
 title: metaData.title,
 thumb: thumb || null,
 author: metaData.author || "-",
@@ -103,14 +103,18 @@ const handler = async (m, { conn, isBotAdmins, isAdmins, command, args, text, is
 try {
 if (!text) return m.reply(`-Example: ${prefix + command} (title)`);
 if (args[0] === "read") {
-if (!komikCache) return m.reply(`-Example: ${prefix + command} (title)`);
 const idx = parseInt(args[1]);
+const mangaId = args[2]; 
+const userMangaData = userCache.get(m.sender);
+if (!userMangaData || !userMangaData[mangaId]) {
+return m.reply(`-Example: ${prefix + command} (title)`);
+}
+const komikCache = userMangaData[mangaId]; 
 if (isNaN(idx) || !komikCache.chapters[idx]) return m.reply(mess.error);
 await m.reply(mess.wait);
 const targetChapter = komikCache.chapters[idx];
 const imgUrls = await getChapterImages(targetChapter.link);
 if (!imgUrls.length) return m.reply(mess.error);
-
 const imageBuffers = await Promise.all(
 imgUrls.map(async (url) => {
 try {
@@ -138,7 +142,6 @@ return null;
 }
 })
 );
-
 const validBuffers = imageBuffers.filter(buf => buf !== null);
 if (!validBuffers.length) return m.reply(mess.error);
 const pdfBuffer = await new Promise((resolve, reject) => {
@@ -161,7 +164,9 @@ caption: `*⌗ Ikiru PDF Reader*
 await m.reply(mess.wait);
 const meta = await ikiruSearch(text);
 if (!meta) return m.reply(mess.error);
-komikCache = meta;
+const currentUserCache = userCache.get(m.sender) || {};
+currentUserCache[meta.manga_id] = meta;
+userCache.set(m.sender, currentUserCache);
 const cap = `*⌗ Ikiru Search*
 > *Title:* ${meta.title}
 > *Author:* ${meta.author || "-"}
@@ -174,7 +179,7 @@ const sections = [
 title: "Chapter List",
 rows: meta.chapters.map((ch, idx) => ({
 title: ch.title,
-id: `${prefix + command} read ${idx}`
+id: `${prefix + command} read ${idx} ${meta.manga_id}` 
 }))
 }
 ];

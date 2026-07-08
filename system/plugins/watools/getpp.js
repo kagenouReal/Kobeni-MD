@@ -14,8 +14,7 @@ const ppUrl = await conn.profilePictureUrl(targetJid, "image");
 await conn.sendMessage(
 m.chat,
 {
-image: { url: ppUrl },
-caption: `*⌗ Profile Pictures*`,
+image: { url: ppUrl }
 },
 {
 quoted: m,

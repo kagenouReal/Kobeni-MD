@@ -281,37 +281,52 @@ const uptime = `${Math.floor(process.uptime() / 3600)}h ${Math.floor((process.up
 const statusBot = isPublic(dbId) ? "Public" : "Self"; 
 let captionText = "";
 if (command === "menu") {
-let catList = Object.keys(categories).map(k => `> │ ◦ ${prefix}smenu ${k}`).join("\n");
-captionText = `*⌗ Bot Info*
-> │ ◦ Uptime: ${uptime}
-> │ ◦ Mode: ${statusBot}
-> │ ◦ Total: ${totalCmds} Cmds
+let keys = Object.keys(categories).filter(k => k !== "owner");
+keys.push("owner");
+let catList = keys.map(k => `> │ ${prefix}smenu ${k}`).join("\n");
+captionText = `Moshi-moshi, ${m.pushName}-san!
+A-anu... selamat datang di Kobeni MD.
 
-*⌗ User Info*
-> │ ◦ Sender: ${m.sender.replace(/\D/g, "")}
-> │ ◦ Access: ${isAccess ? "True" : "False"}
-
-*⌗ Categories*
+╭╼ *⌗ Bot Info* ╾
+> │ Uptime: ${uptime}
+> │ Mode: ${statusBot}
+> │ Total: ${totalCmds} Cmds
+╰╼ 
+╭╼ *⌗ User Info* ╾
+> │ Sender: ${m.sender.replace(/\D/g, "")}
+> │ Access: ${isAccess ? "True" : "False"}
+╰╼
+╭╼ *⌗ Categories* ╾
 ${catList}
-> │ ◦ ${prefix}allmenu`;
+╰╼
+
+_Type ${prefix}allmenu for full list menu.._`;
 } else if (command === "smenu") {
 const category = (args[0] || "owner").toLowerCase();
 const commandsList = categories[category];
 if (!commandsList) return m.reply(mess.wrong);
-captionText = `*⌗ Category:* ${category.charAt(0).toUpperCase() + category.slice(1)}
-> │ ◦ Total: ${commandsList.length} Cmds
+captionText = `╭╼ *⌗ Category:* ${category.charAt(0).toUpperCase() + category.slice(1)} ╾
+> │ Total: ${commandsList.length} Cmds
+╰╼
+╭╼ *⌗ Commands* ╾
+${commandsList.map(cmd => `> │ ${prefix}${cmd}`).join("\n")}
+╰╼
 
-*⌗ Commands*
-${commandsList.map(cmd => `> │ ◦ ${prefix}${cmd}`).join("\n")}`;
+_Type ${prefix}menu to back.._`;
 } else if (command === "allmenu") {
 let allCatText = "";
-for (const cat in categories) {
-allCatText += `*⌗ ${cat.charAt(0).toUpperCase() + cat.slice(1)}*\n${categories[cat].map(cmd => `> │ ◦ ${prefix}${cmd}`).join("\n")}\n\n`;
+let keys = Object.keys(categories).filter(k => k !== "owner");
+keys.push("owner");
+for (const cat of keys) {
+allCatText += `╭╼ *⌗ ${cat.charAt(0).toUpperCase() + cat.slice(1)}* ╾\n${categories[cat].map(cmd => `> │ ${prefix}${cmd}`).join("\n")}\n╰╼\n\n`;
 }
-captionText = `*⌗ All Menu*
-> │ ◦ Total: ${totalCmds} Cmds
+captionText = `╭╼ *⌗ All Menu* ╾
+> │ Total: ${totalCmds} Cmds
+╰╼
 
-${allCatText.trim()}`;
+${allCatText.trim()}
+
+_Type ${prefix}menu to back.._`;
 }
 await conn.sendExternalThumb(
 m.chat,
@@ -322,7 +337,10 @@ thumbUrl: "./system/media/mainthumb.jpg",
 iconUrl: "./system/media/iconthumb.png",
 sourceUrl: "https://github.com/kagenouReal/Kobeni-MD",
 },
-{ quoted: m }
+{ quoted: {
+key: { fromMe: false, participant: "0@s.whatsapp.net", remoteJid: "0@s.whatsapp.net"},
+message: { orderMessage: { orderId: "65bh4ddqr90", thumbnail: fs.readFileSync("./system/media/kobeni.jpg"), itemCount: 999, status: "INQUIRY", surface: "CATALOG", orderTitle: "product", message: "ᴋᴏʙᴇɴɪ ʏᴏɴᴏᴍᴏʀɪ", sellerJid: m.sender, token: "775BBQR0", totalAmount1000: 777, totalCurrencyCode: "MYR", contextInfo: { mentionedJid: [m.sender] } } }
+} }
 );
 break;
 }
@@ -337,9 +355,9 @@ await m.reply(mess.wait);
 const result = await addBot(number);
 if (result.error) return m.reply(mess.error);
 if (result.isNew) {
-return m.reply(`*⌗ ${("Multi Device")}*
-> ${("Number")}: ${(result.id || "-")}
-> ${("Pairing Code")}: ${(result.code || "-")}`);
+return m.reply(`*⌗ Multi Device*
+> *Number:* ${result.id || "-"}
+> *Pairing Code:* ${result.code || "-"}`);
 }
 m.reply(mess.error);
 }
@@ -360,11 +378,11 @@ if (!isMainBot) return m.reply(mess.owner);
 if (!isMainAccess) return m.reply(mess.owner);
 const list = listBot();
 if (!list.length) return m.reply(mess.wrong);
-let txt = `*⌗ ${("List connected devices")}*\n`;
+let txt = `*⌗ List Connected Devices*\n`;
 for (const v of list) {
-txt += `> ${("ID")}: ${v}\n`;
+txt += `> *ID:* ${v}\n`;
 }
-m.reply(txt);
+m.reply(txt.trim());
 }
 break;
 //=================
@@ -454,11 +472,11 @@ const list = currentData.access;
 if (!list || list.length === 0) {
 return m.reply(mess.wrong);
 }
-let teks = `*⌗ ʟɪsᴛ ᴀᴄᴄᴇss*\n`;
+let teks = `*⌗ List Access*\n`;
 list.forEach((u, i) => {
-teks += `> ${i + 1}: ${u.id}\n`;
+teks += `> *No ${i + 1}:* ${u.id}\n`;
 });
-m.reply(teks);
+m.reply(teks.trim());
 }
 break;
 //=================
