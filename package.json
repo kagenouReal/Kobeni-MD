@@ -12,9 +12,12 @@
     "@whiskeysockets/baileys": "npm:baileys",
     "axios": "^1.18.1",
     "canvas": "^3.2.0",
+    "cheerio": "^1.2.0",
+    "file-type": "^22.0.2",
     "fs-extra": "^10.1.0",
     "image-to-pdf": "^3.0.2",
     "jimp": "^1.6.1",
+    "node-webpmux": "^3.2.1",
     "speedtest-net": "^2.2.0",
     "ws": "^8.21.0",
     "yt-search": "^2.13.1"

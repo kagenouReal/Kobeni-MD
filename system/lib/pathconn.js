@@ -1,12 +1,22 @@
 import fs from "node:fs";
 import crypto from "node:crypto";
+import path from "node:path";
+import {tmpdir} from "node:os";
+import {spawn} from "child_process";
 import { Jimp } from 'jimp';
+import axios from "axios";
+import webp from "node-webpmux";
+import {fileTypeFromBuffer} from "file-type";
 import {
 prepareWAMessageMedia,
 generateWAMessageFromContent,
 downloadContentFromMessage,
 } from "@whiskeysockets/baileys";
 //=================
+async function getBuffer(url, options) {
+const response = await axios({method: "get", url, responseType: "arraybuffer", ...options});
+return response.data;
+}
 export default (conn) => {
 conn.decodeJid = (jid) => {
 if (!jid) return jid;
@@ -127,6 +137,83 @@ quotedMessage: quoted.message
 messageContextInfo: { messageSecret: crypto.randomBytes(32) }
 };
 return await conn.relayMessage(jid, content, { quoted });
+};
+//=================
+conn.sendMediaAsSticker = async (jid, mediaPath, quoted, options = {}) => {
+const runFfmpeg = (input, output, ffmpegOptions) => new Promise((resolve, reject) => {
+const process = spawn("ffmpeg", ["-i", input, ...ffmpegOptions, "-f", "webp", "-y", output]);
+process.on("error", reject);
+process.on("close", (code) => {
+if (code === 0) return resolve(true);
+reject(new Error(`ffmpeg exited with code ${code}`));
+});
+});
+const convertToWebp = async (media, isVideo) => {
+const input = path.join(tmpdir(), `${crypto.randomBytes(6).toString("hex")}.${isVideo ? "mp4" : "jpg"}`);
+const output = path.join(tmpdir(), `${crypto.randomBytes(6).toString("hex")}.webp`);
+fs.writeFileSync(input, media);
+try {
+await runFfmpeg(input, output, isVideo
+? ["-vcodec", "libwebp", "-vf", "scale='min(320,iw)':min'(320,ih)':force_original_aspect_ratio=decrease,fps=30, pad=320:320:-1:-1:color=white@0.0, split [a][b]; [a] palettegen=reserve_transparent=on:transparency_color=ffffff [p]; [b][p] paletteuse", "-loop", "0", "-ss", "00:00:00", "-t", "00:00:05", "-preset", "default", "-an", "-vsync", "0"]
+: ["-vcodec", "libwebp", "-vf", "scale='min(320,iw)':min'(320,ih)':force_original_aspect_ratio=decrease,fps=15, pad=320:320:-1:-1:color=white@0.0, split [a][b]; [a] palettegen=reserve_transparent=on:transparency_color=ffffff [p]; [b][p] paletteuse"]);
+return fs.readFileSync(output);
+} finally {
+if (fs.existsSync(input)) fs.unlinkSync(input);
+if (fs.existsSync(output)) fs.unlinkSync(output);
+}
+};
+const addStickerExif = async (media) => {
+const image = new webp.Image();
+const json = {
+"sticker-pack-id": "https://github.com/nazedev/naze",
+"sticker-pack-name": options.packname,
+"sticker-pack-publisher": options.author,
+emojis: options.categories || [""],
+};
+const exifAttr = Buffer.from([
+0x49, 0x49, 0x2a, 0x00, 0x08, 0x00, 0x00, 0x00, 0x01, 0x00, 0x41, 0x57,
+0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x16, 0x00, 0x00, 0x00,
+]);
+const jsonBuffer = Buffer.from(JSON.stringify(json), "utf8");
+const exif = Buffer.concat([exifAttr, jsonBuffer]);
+exif.writeUIntLE(jsonBuffer.length, 14, 4);
+await image.load(media);
+image.exif = exif;
+return image.save(null);
+};
+const buff = Buffer.isBuffer(mediaPath)
+? mediaPath
+: /^data:.*?\/.*?;base64,/i.test(mediaPath)
+? Buffer.from(mediaPath.split`,`[1], "base64")
+: /^https?:\/\//.test(mediaPath)
+? await getBuffer(mediaPath)
+: fs.existsSync(mediaPath)
+? fs.readFileSync(mediaPath)
+: Buffer.alloc(0);
+if (buff.length === 0) {
+throw new Error("error byffer");
+}
+const type = await fileTypeFromBuffer(buff);
+const isVideo = type?.mime?.startsWith("video/") || (typeof mediaPath === "string" && /\.(mp4|webm|mov|avi|gif)$/i.test(mediaPath));
+let buffer = await convertToWebp(buff, isVideo);
+if (options.packname || options.author) buffer = await addStickerExif(buffer);
+const stickerPath = path.join(tmpdir(), `${crypto.randomBytes(6).toString("hex")}.webp`);
+fs.writeFileSync(stickerPath, buffer);
+try {
+await conn.sendMessage(
+jid,
+{
+ sticker: { url: stickerPath },
+...options,
+},
+{
+quoted,
+},
+);
+} finally {
+if (fs.existsSync(stickerPath)) fs.unlinkSync(stickerPath);
+}
+return buffer;
 };
 //=================
 conn.sendAlbum = async (jid, images, caption = "", m) => {

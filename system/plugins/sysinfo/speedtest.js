@@ -4,10 +4,20 @@ const handler = async (m, { conn, isAccess, command, prefix }) => {
 if (!isAccess) return m.reply(mess.owner);
 try {
 await m.reply(mess.wait);  
-const test = await speedtest({ 
-acceptLicense: true, 
-acceptGdpr: true 
+let test;
+let lastError;
+for (let attempt = 0; attempt < 2; attempt++) {
+try {
+test = await speedtest({
+acceptLicense: true,
+acceptGdpr: true,
 });
+break;
+} catch (error) {
+lastError = error;
+}
+}
+if (!test) throw lastError;
 if (!test) return m.reply(mess.error);
 const downloadSpeed = (test.download.bandwidth * 8 / 1000000).toFixed(2);
 const uploadSpeed = (test.upload.bandwidth * 8 / 1000000).toFixed(2);
@@ -25,6 +35,9 @@ const replyText = `*⌗ Speedtest Result*
 m.reply(replyText.trim());
 } catch (e) {
 console.error(e);
+if (e?.code === 110 || /timeout|timed out|cannot open socket/i.test(e?.message || "")) {
+return m.reply("Speedtest timeout saat terhubung ke server pengujian. Coba lagi beberapa saat atau cek firewall/port jaringan server.");
+}
 m.reply(mess.error);
 }
 };
