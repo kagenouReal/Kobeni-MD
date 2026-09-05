@@ -1,3 +1,4 @@
+//=================
 const handler = async (
 m,
 { conn, command, text, prefix },
@@ -19,9 +20,10 @@ packname,
 author,
 });
 } catch (error) {
-console.error(error);
+console.error("Handler:", error.message);
 m.reply(mess.error);
 }
 };
+//=================
 handler.command = ["swm"];
 export default handler;

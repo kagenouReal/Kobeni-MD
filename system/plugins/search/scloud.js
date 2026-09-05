@@ -93,7 +93,6 @@ const cap = `*⌗ SoundCloud Play*
 > *Duration:* ${vid.timestamp}
 > *Views:* ${String(vid.views)}
 > *Author:* ${vid.author.name}
-
 _Status: Downloading audio, please wait..._`;
 await conn.sendExternalThumb(
 m.chat,
@@ -132,10 +131,12 @@ if (fs.existsSync(output)) fs.unlinkSync(output);
 m.reply(mess.error);
 } catch (err) {
 if (fs.existsSync(output)) fs.unlinkSync(output);
+console.error("Handler:", err.message);
 m.reply(mess.error);
 }
 });
 } catch (err) {
+console.error("Handler:", err.message);
 m.reply(mess.error);
 }
 };

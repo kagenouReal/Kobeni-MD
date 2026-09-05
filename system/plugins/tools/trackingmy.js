@@ -225,7 +225,7 @@ return m.reply(caption);
 }
 m.reply(mess.error);
 } catch (err) {
-console.error(err);
+console.error("Handler:", err.message);
 m.reply(mess.error);
 }
 return;
@@ -254,7 +254,7 @@ return m.reply(mess.success);
 }
 m.reply(mess.wrong);
 } catch (err) {
-console.error(err);
+console.error("Handler:", err.message);
 m.reply(mess.error);
 }
 return;
@@ -289,7 +289,7 @@ caption += `\n\n*${index + 1}. [${cp.status?.toUpperCase() || "LOG"}]*
 }
 await conn.sendMessage(m.chat, { text: caption.trim() }, { quoted: m });
 } catch (err) {
-console.error(err);
+console.error("Handler:", err.message);
 m.reply(mess.error);
 }
 };

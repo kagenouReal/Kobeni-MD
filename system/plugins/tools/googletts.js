@@ -30,7 +30,7 @@ mimetype: "audio/mpeg",
 { quoted: m },
 );
 } catch (error) {
-console.error(error);
+console.error("Handler:", error.message);
 m.reply(mess.error);
 }
 };

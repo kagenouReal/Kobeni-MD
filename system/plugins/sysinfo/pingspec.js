@@ -69,22 +69,19 @@ const replyText = `*⌗ System Information*
 > *OS:* ${platform} (${arch})
 > *Uptime:* ${uptime}
 > *Ping:* ${pingMs}
-
 *⌗ CPU Info*
 > *Model:* ${cpuInfo}
 > *Cores:* ${cpuCores}
 > *Load:* ${cpuLoad}
-
 *⌗ Memory Info*
 > *Total:* ${totalMem}
 > *Used:* ${usedMem}
 > *Free:* ${freeMem}
-
 *⌗ Disk Info*
 ${diskInfo}`;
 m.reply(replyText);
 } catch (e) {
-console.error(e);
+console.error("Handler:", e.message);
 m.reply(mess.error);
 }
 };

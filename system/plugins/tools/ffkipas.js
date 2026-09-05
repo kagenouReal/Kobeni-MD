@@ -43,7 +43,7 @@ headers: {
 });
 return responseAjax.data;
 } catch (error) {
-console.error(error);
+console.error("Handler:", error.message);
 return null;
 }
 }
@@ -61,7 +61,7 @@ const caption = `*⌗ Verify FF Kipas Info*
 > *Message:* ${res.message || "-"}`.trim();
 await conn.sendMessage(m.chat, { text: caption }, { quoted: m });
 } catch (e) {
-console.error(e);
+console.error("Handler:", e.message);
 m.reply(mess.error);
 }
 };

@@ -26,7 +26,6 @@ const replyText = `*⌗ Speedtest Result*
 > *Upload:* ${uploadSpeed} Mbps
 > *Ping:* ${test.ping.latency.toFixed(2)} ms
 > *Jitter:* ${test.ping.jitter.toFixed(2)} ms
-
 *⌗ Server & ISP Info*
 > *ISP Name:* ${test.isp || "-"}
 > *Server Name:* ${test.server.name || "-"}
@@ -34,10 +33,7 @@ const replyText = `*⌗ Speedtest Result*
 > *Host:* ${test.server.host || "-"}`;
 m.reply(replyText.trim());
 } catch (e) {
-console.error(e);
-if (e?.code === 110 || /timeout|timed out|cannot open socket/i.test(e?.message || "")) {
-return m.reply("Speedtest timeout saat terhubung ke server pengujian. Coba lagi beberapa saat atau cek firewall/port jaringan server.");
-}
+console.error("Handler:", e.message);
 m.reply(mess.error);
 }
 };

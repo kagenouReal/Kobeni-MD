@@ -50,7 +50,6 @@ return {
 'x-khronos': '1782574292'
 };
 }
-
 async chat(prompt, options = {}) {
 try {
 const dynamicToken = this.generateDynamicToken();
@@ -210,7 +209,6 @@ message: cleanMessage
 }
 resolve(output);
 });
-
 response.data.on('error', () => reject(new Error('Stream error encountered')));
 });
 } catch (error) {
@@ -218,7 +216,6 @@ throw new Error(error.response ? `API Error: ${error.response.status}` : 'Networ
 }
 }
 }
-
 //=================
 const handler = async (m, { conn, isBotAdmins, isAdmins, command, args, text, isAccess, prefix }) => {
 if (!text) return m.reply(`- Example: ${prefix + command} (text)`);

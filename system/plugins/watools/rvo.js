@@ -14,7 +14,7 @@ m.chat,
 );
 await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id });
 } catch (err) {
-console.error(err);
+console.error("Handler:", err.message);
 m.reply(mess.error);
 }
 };

@@ -32,11 +32,11 @@ const messageType = message.mtype
 ? message.mtype.replace(/Message/gi, "")
 : mime.split("/")[0];
 const stream = await downloadContentFromMessage(message, messageType);
-let buffer = Buffer.from([]);
+const chunks = [];
 for await (const chunk of stream) {
-buffer = Buffer.concat([buffer, chunk]);
+chunks.push(chunk);
 }
-return buffer;
+return Buffer.concat(chunks);
 };
 //=================
 conn.updatePFPMod = async (content) => {

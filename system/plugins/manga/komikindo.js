@@ -119,7 +119,6 @@ const cap = `*⌗ Komikindo Search*
 > *Author:* ${meta.author || "-"}
 > *Type:* ${meta.type || "-"}
 > *Total Chapter:* ${meta.total_chapter || 0}
-
 _Status: Please select a chapter below to read..._`;
 const sections = [
 {
@@ -182,7 +181,7 @@ messageId: msg.key.id,
 additionalNodes: INTERACTIVE_NODES
 });
 } catch (err) {
-console.error(err);
+console.error("Handler:", err.message);
 m.reply(mess.error);
 }
 };

@@ -12,7 +12,6 @@ if (!data || data.code !== 0) return null;
 const result = data.data;
 let type = "video";
 let videoBuffer = null;
-
 if (result.hdplay) {
 const vid = await axios.get(result.play, { responseType: "arraybuffer" });
 videoBuffer = Buffer.from(vid.data);
@@ -51,7 +50,7 @@ author: result.music_info?.author || "",
 };
 return { type, videoBuffer, audioBuffer, imageBuffers, meta };
 } catch (err) {
-console.error("error jr:", err);
+console.error("Handler:", err.message);
 return null;
 }
 }
@@ -100,7 +99,7 @@ m.chat,
 }
 }
 } catch (e) {
-console.error(e);
+console.error("Handler:", e.message);
 m.reply(mess.error);
 }
 };

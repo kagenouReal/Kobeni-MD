@@ -21,8 +21,8 @@ quoted: m,
 },
 );
 } catch (error) {
+console.error("Handler:", error.message);
 m.reply(mess.error);
-console.error(error);
 }
 };
 //=================

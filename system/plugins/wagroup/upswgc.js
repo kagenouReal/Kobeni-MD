@@ -75,7 +75,6 @@ id: `${prefix + command} ${g.id}`
 if (!groupRows.length) return m.reply(mess.wrong);
 const cap = `*⌗ Broadcast Group*
 > *Status:* Media saved
-
 _Notice: Select target group..._`;
 const sections = [
 {
@@ -128,7 +127,7 @@ messageId: msg.key.id,
 additionalNodes: INTERACTIVE_NODES
 });
 } catch (error) {
-console.error(error);
+console.error("Handler:", error.message);
 m.reply(mess.error);
 }
 };

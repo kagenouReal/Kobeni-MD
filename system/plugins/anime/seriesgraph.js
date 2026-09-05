@@ -75,7 +75,6 @@ this.dataMatrix[e][s] = this.ratings[key].toFixed(1);
 }
 });
 this.sortedSeasons = Array.from(seasonsSet).sort((a, b) => a - b);
-
 if (this.detail.poster_path && !this.detail.poster_path.startsWith('http')) {
 this.detail.poster_path = `https://image.tmdb.org/t/p/w500${this.detail.poster_path}`;
 }
@@ -255,7 +254,6 @@ const caption = `*⌗ Series Graph*
 > *Global Rating:* ${seriesGraph.detail.vote_average || 'N/A'}
 > *First Air:* ${seriesGraph.detail.first_air_date || 'N/A'}
 > *Status:* ${seriesGraph.detail.status || 'N/A'}
-
 _Chart by: ${seriesGraph.userName}_`;
 await conn.sendMessage(m.chat, { 
 image: imageBuffer, 

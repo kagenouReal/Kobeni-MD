@@ -12,7 +12,6 @@ const replyText = `*⌗ Network & IP Info*
 > *ISP Name:* ${d.isp || "-"}
 > *Organization:* ${d.org || "-"}
 > *ASN:* ${d.as || "-"}
-
 *⌗ Location Info*
 > *City:* ${d.city || "-"}
 > *Region:* ${d.regionName || "-"}
@@ -22,7 +21,7 @@ const replyText = `*⌗ Network & IP Info*
 > *Coordinate:* ${d.lat}, ${d.lon}`;
 m.reply(replyText.trim());
 } catch (e) {
-console.error(e);
+console.error("Handler:", e.message);
 m.reply(mess.error);
 }
 };

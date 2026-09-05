@@ -7,14 +7,14 @@ return m.reply(`-Example: Reply Chat ${prefix + command}`);
 await m.reply(mess.wait);
 const penis = JSON.stringify({ [m.quoted.mtype]: m.quoted }, null, 2);
 const jeneng = `quotedjson.json`;
-await fs.writeFileSync(jeneng, penis);
+fs.writeFileSync(jeneng, penis);
 await m.reply(penis);
 await conn.sendMessage(
 m.chat,
 { document: { url: `./${jeneng}` }, fileName: jeneng, mimetype: "*/*" },
 { quoted: m },
 );
-await fs.unlinkSync(jeneng);
+fs.unlinkSync(jeneng);
 };
 //=================
 handler.command = ["quoted"];

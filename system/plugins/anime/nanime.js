@@ -91,8 +91,7 @@ if (fs.existsSync(p)) fs.unlinkSync(p);
 //=================
 const handler = async (m, { conn, isBotAdmins, isAdmins, command, args, text, isAccess, prefix }) => {
 try {
-if (!text) return m.reply(`-Example:
- 
+if (!text) return m.reply(`-Example:\n
 ${prefix + command} login
 ${prefix + command} verify (url)
 ${prefix + command} logout
@@ -130,7 +129,7 @@ return m.reply(mess.success);
 }
 m.reply(mess.wrong);
 } catch (err) {
-console.error(err);
+console.error("Handler:", err.message);
 m.reply(mess.error);
 }
 return;
@@ -193,7 +192,7 @@ messageId: msg.key.id,
 additionalNodes: INTERACTIVE_NODES
 });
 } catch (err) {
-console.error(err);
+console.error("Handler:", err.message);
 m.reply(mess.error);
 }
 return;
@@ -226,7 +225,6 @@ const cap = `*⌗ Nanime ${genreName}*
 > *Episodes:* ${a.episodes_count || "-"}
 > *Release:* ${a.tanggal_rilis_anime || "-"}
 > *Genres:* ${a.genre_anime?.join(", ") || "-"}
-
 _Select episode below to watch..._`;
 if (a.episodes && a.episodes.length > 0) {
 const sections = [{
@@ -285,7 +283,7 @@ additionalNodes: INTERACTIVE_NODES
 await conn.sendMessage(m.chat, { image: { url: a.gambar_anime }, caption: cap }, { quoted: m });
 }
 } catch (err) {
-console.error(err);
+console.error("Handler:", err.message)
 m.reply(mess.error);
 }
 return;
@@ -305,7 +303,6 @@ const userMangaData = userCache.get(m.sender);
 const currentCache = userMangaData ? userMangaData[animeId] : null;
 if (!currentCache) {
 return m.reply(`-Example:
- 
 ${prefix + command} login
 ${prefix + command} verify (url)
 ${prefix + command} logout
@@ -330,7 +327,7 @@ await conn.sendMessage(m.chat, {
 text: cap.trim()
 }, { quoted: m });
 } catch (err) {
-console.error(err);
+console.error("Handler:", err.message);
 m.reply(mess.error);
 }
 return;
@@ -406,7 +403,6 @@ const cap = `*⌗ Nanime Catalog [${selectedLetter}]*
 > *Episodes:* ${a.episodes_count || "-"}
 > *Release:* ${a.tanggal_rilis_anime || "-"}
 > *Genres:* ${a.genre_anime?.join(", ") || "-"}
-
 _Select episode below to watch..._`;
 if (a.episodes && a.episodes.length > 0) {
 const sections = [{
@@ -465,7 +461,7 @@ additionalNodes: INTERACTIVE_NODES
 await conn.sendMessage(m.chat, { image: { url: a.gambar_anime }, caption: cap }, { quoted: m });
 }
 } catch (err) {
-console.error(err);
+console.error("Handler:", err.message);
 m.reply(mess.error);
 }
 return;
@@ -490,9 +486,7 @@ const cap = `*⌗ Nanime Search*
 > *Episodes:* ${a.episodes_count || "-"}
 > *Release:* ${a.tanggal_rilis_anime || "-"}
 > *Genres:* ${a.genre_anime?.join(", ") || "-"}
-
 _Select episode below to watch..._`;
-
 if (a.episodes && a.episodes.length > 0) {
 const sections = [{
 title: "Episode List",
@@ -550,12 +544,11 @@ additionalNodes: INTERACTIVE_NODES
 await conn.sendMessage(m.chat, { image: { url: a.gambar_anime }, caption: cap }, { quoted: m });
 }
 } catch (err) {
-console.error(err);
+console.error("Handler:", err.message);
 m.reply(mess.error);
 }
-
 } catch (err) {
-console.error(err);
+console.error("Handler:", err.message);
 m.reply(mess.error);
 }
 };

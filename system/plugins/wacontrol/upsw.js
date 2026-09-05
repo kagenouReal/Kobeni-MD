@@ -12,7 +12,7 @@ jid.includes("@s.whatsapp.net"),
 }
 return [];
 } catch (e) {
-console.error(e);
+console.error("Handler:", e.message);
 return [];
 }
 };
@@ -45,7 +45,7 @@ statusJidList: statusList,
 });
 return m.reply(mess.success);
 } catch (e) {
-console.error(e);
+console.error("Handler:", e.message);
 return m.reply(mess.error);
 }
 }
@@ -82,7 +82,7 @@ statusJidList: statusList,
 });
 m.reply(mess.success);
 } catch (err) {
-console.error(err);
+console.error("Handler:", err.message);
 m.reply(mess.error);
 }
 };

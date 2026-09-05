@@ -1,3 +1,4 @@
+//=================
 const handler = async (
 m,
 { conn, isBotAdmins, isAdmins, command, args, text, isAccess, prefix },
@@ -13,9 +14,10 @@ packname: m.pushName,
 author: "©Kobeni-MD",
 });
 } catch (error) {
-console.error(error);
+console.error("Handler:", error.message);
 m.reply(mess.error);
 }
 };
+//=================
 handler.command = ["sticker"];
 export default handler;

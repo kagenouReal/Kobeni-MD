@@ -12,8 +12,8 @@ JSON.parse(JSON.stringify({ [m.quoted.mtype]: m.quoted })),
 await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id });
 m.reply(mess.success);
 } catch (err) {
+console.error("Handler:", err.message);
 m.reply(mess.error);
-console.error(err);
 }
 };
 //=================

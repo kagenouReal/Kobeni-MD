@@ -1,5 +1,5 @@
 import './system/setting.js'
-import makeWASocket, {useMultiFileAuthState, DisconnectReason, fetchLatestBaileysVersion} from "@whiskeysockets/baileys";
+import makeWASocket, {useMultiFileAuthState, DisconnectReason} from "@whiskeysockets/baileys";
 import readline from "readline";
 import fs from "node:fs";
 import path from "node:path";

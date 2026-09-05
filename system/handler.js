@@ -1,39 +1,20 @@
 //=================
 import fs from "fs-extra";
-import {
-prepareWAMessageMedia,
-downloadContentFromMessage,
-generateWAMessageFromContent,
-} from "@whiskeysockets/baileys";
-import { exec } from "node:child_process";
-import util from "node:util";
-import crypto from "node:crypto";
-const { createRequire } = await import("module");
+import { generateWAMessageFromContent } from "@whiskeysockets/baileys";
 import { addAccessUser, delAccessUser, setPublic, isPublic, get } from "./lib/access.js";
 import { getGroupAdmins } from "./lib/smsg.js";
 import { addBot, delBot, listBot } from "../outdex.js";
-import { fileURLToPath } from "node:url";
-import {
-setKobeniStatus,
-getKobeniStatus,
-getChatClient,
-chatClients
-} from "./lib/kobeni.js";
 //=================
 export default async (conn, m) => {
 try {
-const currentFilePath = fileURLToPath(import.meta.url);
 const body = m.body || "";
 const prefix = global.prefix.find((p) => body.startsWith(p)) || "";
 //=================
-const routerCode = fs.readFileSync(currentFilePath, "utf-8");
 const botNumberJid = conn.decodeJid(conn.user.id);
 const botNumber = botNumberJid.replace(/[^0-9]/g, "");
 const globalOwnerJid = `${global.owner}@s.whatsapp.net`;
 const isMainBot = !conn.isClone;
 const dbId = isMainBot ? "main" : botNumber;
-const isKobeniActive = getKobeniStatus(dbId);
-const isCallingKobeni = body.toLowerCase().includes("kobeni");
 const mainData = get("main");
 const mainAccess = mainData.access || [];
 const isMainAccess =
@@ -43,9 +24,6 @@ mainAccess.some(
 (u) => `${u.id.replace(/\D/g, "")}@s.whatsapp.net` === m.sender,
 );
 //=================
-if (!prefix) {
-if (!isKobeniActive || (!isCallingKobeni)) return;
-}
 let args = prefix
 ? body.slice(prefix.length).trim().split(/ +/).slice(1)
 : body.trim().split(/ +/).slice(1);
@@ -81,138 +59,6 @@ console.log(
 `Dari \x1b[95m${m.pushName}\x1b[0m`,
 );
 //=================
-const lowerBody = body.toLowerCase().trim();
-const containsKobeni = /\bkobeni\b/i.test(body);
-const isCall = containsKobeni;
-const isKobeniControlCmd = command === "kobeni" && ["on", "off", "reset"].includes(args[0]?.toLowerCase()); 
-if (isKobeniActive && (isCall || !prefix) && !isKobeniControlCmd) {
-let promptText = body.trim();
-if (isCall) {
-let cleanText = body;
-if (prefix && cleanText.startsWith(prefix)) {
-cleanText = cleanText.slice(prefix.length);
-}
-promptText = cleanText.replace(/\bkobeni\b/gi, "").replace(/\s+/g, " ").trim();
-}
-//=================
-if (!promptText) {
-if (isCall) {
-return m.reply(`I-Iya? Ada yang bisa Kobeni bantu, ${m.pushName}?`);
-}
-} else {
-await conn.sendPresenceUpdate("composing", m.chat);
-try {
-const userName = m.pushName || "User";
-const commandListWithPerms = [];
-for (const cmd in global.plugins) {
-if (global.plugins[cmd].handler) {
-const handlerStr = global.plugins[cmd].handler.toString();
-const reqs = [];
-if (handlerStr.includes("isAccess")) reqs.push("isAccess");
-if (handlerStr.includes("isMainAccess")) reqs.push("isMainAccess");
-if (handlerStr.includes("isAdmins")) reqs.push("isAdmins");
-if (handlerStr.includes("isBotAdmins")) reqs.push("isBotAdmins");
-if (handlerStr.includes("isMainBot")) reqs.push("isMainBot");
-commandListWithPerms.push(`- ${cmd} (Syarat: ${reqs.length > 0 ? reqs.join(", ") : "Public"})`);
-}
-}
-const caseRegex = /case\s+["']([^"']+)["']\s*:([\s\S]*?)(?=case\s+["']|default\s*:|$)/g;
-let matchCase;
-while ((matchCase = caseRegex.exec(routerCode)) !== null) {
-const cmdName = matchCase[1];
-const cmdCode = matchCase[2];
-const reqs = [];
-if (cmdCode.includes("isAccess")) reqs.push("isAccess");
-if (cmdCode.includes("isMainAccess")) reqs.push("isMainAccess");
-if (cmdCode.includes("isAdmins")) reqs.push("isAdmins");
-if (cmdCode.includes("isBotAdmins")) reqs.push("isBotAdmins");
-if (cmdCode.includes("isMainBot")) reqs.push("isMainBot");
-if (cmdName !== "kobeni") {
-commandListWithPerms.push(`- ${cmdName} (Syarat: ${reqs.length > 0 ? reqs.join(", ") : "Public"})`);
-}
-}
-const client = getChatClient(m.sender);
-const response = await client.chat(promptText, {
-userName,
-isAccess,
-isMainAccess,
-isAdmins,
-isBotAdmins,
-isMainBot,
-commandListWithPerms
-});
-let replyText = response.text || "";
-const sendKobeniReply = async (textMsg) => {
-await conn.sendMessage(m.chat, {
-text: textMsg
-},{ quoted: {
-key: { fromMe: false, participant: "0@s.whatsapp.net", remoteJid: "0@s.whatsapp.net"},
-message: { orderMessage: { orderId: "65bh4ddqr90", thumbnail: fs.readFileSync("./system/media/kobeni.jpg"), itemCount: 999, status: "INQUIRY", surface: "CATALOG", orderTitle: "product", message: "ᴋᴏʙᴇɴɪ ʏᴏɴᴏᴍᴏʀɪ", sellerJid: m.sender, token: "775BBQR0", totalAmount1000: 777, totalCurrencyCode: "MYR", contextInfo: { mentionedJid: [m.sender] } } }
-} })
-};
-//=================
-const cmdStart = replyText.lastIndexOf('[CMD:');
-const cmdEnd = replyText.lastIndexOf(']');
-if (cmdStart !== -1 && cmdEnd > cmdStart) {
-const kobeniDialog = replyText.substring(0, cmdStart).trim();
-const cmdFull = replyText.substring(cmdStart, cmdEnd + 1);
-const cmdMatch = cmdFull.match(/\[CMD:\s*(\w+)(?:\s+([\s\S]*?))?\s*\]$/);
-if (cmdMatch) {
-const cmdName = cmdMatch[1].toLowerCase().trim();
-const cmdArgsText = (cmdMatch[2] || "").trim();
-if (kobeniDialog) {
-await sendKobeniReply(kobeniDialog);
-}
-const fakeBody = `${prefix || "."}${cmdName} ${cmdArgsText}`.trim();
-const fakeArgs = cmdArgsText ? cmdArgsText.split(/\n/).filter(l => l.trim()) : [];
-const fakeM = {
-...m,
-body: fakeBody,
-text: cmdArgsText,
-args: fakeArgs,
-query: cmdArgsText,
-};
-const targetPlugin = global.plugins[cmdName];
-if (targetPlugin) {
-await targetPlugin.handler(fakeM, {
-conn,
-m: fakeM,
-isBotAdmins,
-isAdmins,
-command: cmdName,
-args: fakeArgs,
-text: cmdArgsText,
-isAccess,
-prefix: prefix || ".",
-});
-return;
-} else {
-m.body = fakeBody;
-m.text = cmdArgsText;
-m.args = fakeArgs;
-command = cmdName;
-args = fakeArgs;
-text = cmdArgsText;
-}
-} else {
-if (replyText) {
-return await sendKobeniReply(replyText);
-}
-}
-} else {
-if (replyText) {
-return await sendKobeniReply(replyText);
-} else {
-return m.reply("Maaf, Kobeni bingung mau jawab apa..");
-}
-}
-} catch (err) {
-console.error("Error Kobeni Agent:", err);
-return m.reply("A-Aduh, sepertinya otak Kobeni sedang konslet...");
-}
-}
-};
-//=================
 const pluginData = global.plugins[command];
 if (pluginData) {
 await pluginData.handler(m, {
@@ -231,42 +77,11 @@ return;
 //=================
 switch (command) {
 //=================
-case "kobeni": {
-const mode = (args[0] || "").toLowerCase().trim();
-if (!mode) {
-return m.reply(
-`-Example:
-
-${prefix + command} on
-${prefix + command} off
-${prefix + command} reset`
-);
-}
-if (mode === "on") {
-if (!isAccess) return m.reply(mess.owner);
-setKobeniStatus(true, dbId); 
-return m.reply(mess.success);
-} 
-if (mode === "off") {
-if (!isAccess) return m.reply(mess.owner);
-setKobeniStatus(false, dbId); 
-return m.reply(mess.success);
-}
-if (mode === "reset") {
-if (chatClients && chatClients.has(m.sender)) {
-chatClients.get(m.sender).reset();
-}
-return m.reply(mess.success);
-}
-return m.reply(mess.wrong);
-}
-break;
-//=================
 case "menu":
 case "smenu":
 case "allmenu": {
 const categories = {
-owner: ["kobeni", "public", "self", "addaccess", "delaccess", "listaccess", "addbot", "delbot", "listbot", "exec", "eval"]
+owner: ["public", "self", "addaccess", "delaccess", "listaccess", "addbot", "delbot", "listbot"]
 };
 for (const cmd in global.plugins) {
 const cat = (global.plugins[cmd].category || "plugins").toLowerCase();
@@ -286,7 +101,6 @@ keys.push("owner");
 let catList = keys.map(k => `> │ ${prefix}smenu ${k}`).join("\n");
 captionText = `Moshi-moshi, ${m.pushName}-san!
 A-anu... selamat datang di Kobeni MD.
-
 ╭╼ *⌗ Bot Info* ╾
 > │ Uptime: ${uptime}
 > │ Mode: ${statusBot}
@@ -299,7 +113,6 @@ A-anu... selamat datang di Kobeni MD.
 ╭╼ *⌗ Categories* ╾
 ${catList}
 ╰╼
-
 _Type ${prefix}allmenu for full list menu.._`;
 } else if (command === "smenu") {
 const category = (args[0] || "owner").toLowerCase();
@@ -311,7 +124,6 @@ captionText = `╭╼ *⌗ Category:* ${category.charAt(0).toUpperCase() + categ
 ╭╼ *⌗ Commands* ╾
 ${commandsList.map(cmd => `> │ ${prefix}${cmd}`).join("\n")}
 ╰╼
-
 _Type ${prefix}menu to back.._`;
 } else if (command === "allmenu") {
 let allCatText = "";
@@ -323,9 +135,7 @@ allCatText += `╭╼ *⌗ ${cat.charAt(0).toUpperCase() + cat.slice(1)}* ╾\n$
 captionText = `╭╼ *⌗ All Menu* ╾
 > │ Total: ${totalCmds} Cmds
 ╰╼
-
 ${allCatText.trim()}
-
 _Type ${prefix}menu to back.._`;
 }
 await conn.sendExternalThumb(
@@ -348,7 +158,7 @@ break;
 case "addbot": {
 if (!isMainBot) return m.reply(mess.owner);
 if (!isMainAccess) return m.reply(mess.owner);
-if (!text) return m.reply(`-Example: ${prefix + command} (nomor)`);
+if (!text) return m.reply(`-Example: ${prefix + command} (number)`);
 const number = text.replace(/[^0-9]/g, "");
 if (number === botNumber) return m.reply(mess.owner);
 await m.reply(mess.wait);
@@ -366,7 +176,7 @@ break;
 case "delbot": {
 if (!isMainBot) return m.reply(mess.owner);
 if (!isMainAccess) return m.reply(mess.owner);
-if (!text) return m.reply(`-Example: ${prefix + command} (nomor)`);
+if (!text) return m.reply(`-Example: ${prefix + command} (number)`);
 const id = text.replace(/[^0-9]/g, "");
 delBot(id);
 m.reply(mess.success);
@@ -383,43 +193,6 @@ for (const v of list) {
 txt += `> *ID:* ${v}\n`;
 }
 m.reply(txt.trim());
-}
-break;
-//=================
-case "exec": {
-if (!isMainBot) return m.reply(mess.owner);
-if (!isMainAccess) return m.reply(mess.owner);
-if (!text) return m.reply(`-Example: ${prefix + command} (ls -l)`);
-exec(text, (err, stdout, stderr) => {
-if (err) {
-return m.reply(`-Exec Error:\n${stderr.trim() || err.message}`);
-}
-m.reply(stdout || stderr || "");
-});
-}
-break;
-//=================
-case "eval": {
-if (!isMainBot) return m.reply(mess.owner);
-if (!isMainAccess) return m.reply(mess.owner);
-if (!text) return m.reply(`-Example: ${prefix + command} (Code)`);
-try {
-const require = createRequire(import.meta.url);
-const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
-const fn = new AsyncFunction(
-"m", "conn", "sock", "require", "util",
-`return (async () => { ${text} })()`
-);
-let result = await fn(m, conn, conn, require, util);
-if (result === undefined || result === null) {
-result = String(result);
-} else if (typeof result !== "string") {
-result = util.inspect(result, { depth: 4 });
-}
-await m.reply(result || "");
-} catch (err) {
-await m.reply(`Error:\n${String(err)}`);
-}
 }
 break;
 //=================
@@ -444,7 +217,7 @@ break;
 case "addaccess":
 {
 if (!isAccess) return m.reply(mess.owner);
-if (!text) return m.reply(`-Example: ${prefix + command} (nomor)`);
+if (!text) return m.reply(`-Example: ${prefix + command} (number)`);
 const user = text.replace(/[^\d]/g, "");
 if (currentData.access.some((u) => u.id === user))
 return m.reply(mess.wrong);
@@ -456,7 +229,7 @@ break;
 case "delaccess":
 {
 if (!isAccess) return m.reply(mess.owner);
-if (!text) return m.reply(`-Example: ${prefix + command} (nomor)`);
+if (!text) return m.reply(`-Example: ${prefix + command} (number)`);
 const user = text.replace(/[^\d]/g, "");
 if (!currentData.access.some((u) => u.id === user))
 return m.reply(mess.wrong);

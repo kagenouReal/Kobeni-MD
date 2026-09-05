@@ -21,7 +21,7 @@ responseType: "arraybuffer"
 });
 return Buffer.from(res.data, "binary");
 } catch (e) {
-console.error("Failed to fetch image buffer, using fallback:", e.message);
+console.error("Handler:", e.message);
 return null;
 }
 };
@@ -106,14 +106,13 @@ cap += `\n> (Link missing.)`;
 await conn.sendMessage(m.chat, {
 text: cap.trim()
 }, { quoted: m });
-
 } catch (err) {
-console.error(err);
+console.error("Handler:", err.message);
 m.reply(mess.error);
 }
 return;
 }
-if (!text) return m.reply(`-Example:\n \n${prefix + command} (title)`);
+if (!text) return m.reply(`-Example: ${prefix + command} (title)`);
 await m.reply(mess.wait);
 try {
 const currentToken = getRandomToken();
@@ -143,7 +142,6 @@ const cap = `*⌗ AnimeIn Search*
 > *Episodes:* ${episodes ? episodes.length : "-"}
 > *Release:* ${releaseYear}
 > *Genres:* ${genres}
-
 _Select episode below to watch..._`;
 if (episodes && episodes.length > 0) {
 const sections = [{
@@ -214,11 +212,11 @@ caption: cap
 }, { quoted: m });
 }
 } catch (err) {
-console.error(err);
+console.error("Handler:", err.message);
 m.reply(mess.error);
 }
 } catch (err) {
-console.error(err);
+console.error("Handler:", err.message);
 m.reply(mess.error);
 }
 };
