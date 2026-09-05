@@ -107,7 +107,7 @@ if (inputFirst === "login") {
 if (!isAccess) return m.reply(mess.owner);
 if (currentToken) return m.reply(mess.wrong);
 const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=536941617808-m9krnqev6lfl1e7kkdsj9v1al6dfk0v9.apps.googleusercontent.com&redirect_uri=${encodeURIComponent("https://developers.google.com/oauthplayground")}&response_type=id_token&scope=openid%20profile%20email&nonce=${Math.random().toString(36).substring(2)}`;
-return m.reply(`*⌗ Google Login Link*\n> ${authUrl}`.trim());
+return m.reply(`*⌗ Google Login Link*\n> *Link:* ${authUrl}`.trim());
 }
 if (inputFirst === "verify") {
 if (!isAccess) return m.reply(mess.owner);

@@ -242,7 +242,7 @@ return canvas.toBuffer('image/png');
 //=================
 const handler = async (m, { conn, isBotAdmins, isAdmins, command, args, text, isAccess, prefix }) => {
 if (!text) {
-return m.reply(`-Example: Reply Chat ${prefix + command} (title)`);
+return m.reply(`-Example: ${prefix + command} (title)`);
 }
 try {
 await m.reply(mess.wait);
@@ -254,6 +254,7 @@ const caption = `*⌗ Series Graph*
 > *Global Rating:* ${seriesGraph.detail.vote_average || 'N/A'}
 > *First Air:* ${seriesGraph.detail.first_air_date || 'N/A'}
 > *Status:* ${seriesGraph.detail.status || 'N/A'}
+
 _Chart by: ${seriesGraph.userName}_`;
 await conn.sendMessage(m.chat, { 
 image: imageBuffer, 
