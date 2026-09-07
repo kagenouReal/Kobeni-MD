@@ -4,7 +4,7 @@ m,
 { conn, command, text, prefix },
 ) => {
 if (!m.quoted) {
-return m.reply(`-Example: Reply Media ${prefix + command} packname author`);
+return  m.reply(`-Example: Reply Media ${prefix + command} pack name|author name`);
 }
 const separatorIndex = text.indexOf("|");
 const packname = separatorIndex === -1 ? "" : text.slice(0, separatorIndex).trim();

@@ -24,8 +24,7 @@ timeout: 60000
 );
 return res.data;
 } catch (err) {
-console.error(
-"RemoveBG API:",
+console.error("Handler:" ,
 err?.response?.data || err.message
 );
 return null;
@@ -62,8 +61,7 @@ result.status !== "success" ||
 !Array.isArray(result.results) ||
 !result.results.length
 ) {
-console.error(
-"RemoveBG Invalid Response:",
+console.error("Handler:" ,
 result
 );
 return m.reply(mess.error);

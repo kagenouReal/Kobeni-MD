@@ -118,8 +118,7 @@ const cap = `*⌗ Komikindo Search*
 > *Title:* ${meta.title}
 > *Author:* ${meta.author || "-"}
 > *Type:* ${meta.type || "-"}
-> *Total Chapter:* ${meta.total_chapter || 0}
-_Status: Please select a chapter below to read..._`;
+> *Total Chapter:* ${meta.total_chapter || 0}`;
 const sections = [
 {
 title: "Chapter List",

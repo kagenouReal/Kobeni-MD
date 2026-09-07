@@ -603,7 +603,11 @@ if (mode === "reset") {
 resetUserMemory(senderId);
 return m.reply(mess.success);
 }
-if (!text) return m.reply(`-Example:\n\n${prefix + command} (text)\n${prefix + command} reset`);
+if (!text) return m.reply(
+`-Example:
+
+${prefix + command} (text)
+${prefix + command} reset`);
 const userName = m.pushName || "User";
 const getClient = () => {
 if (!kobeniClients.has(senderId)) kobeniClients.set(senderId, new KobeniClient());

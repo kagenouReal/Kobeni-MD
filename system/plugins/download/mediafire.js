@@ -37,8 +37,7 @@ name: fileName || "mediafire_file",
 size: fileSize
 };
 } catch (e) {
-console.error(
-"MediaFire:",
+console.error("Handler:" ,
 e?.response?.data || e.message
 );
 return null;
@@ -57,8 +56,7 @@ maxRedirects: 10
 });
 return Buffer.from(response.data);
 } catch (e) {
-console.error(
-"MediaFire Download:",
+console.error("Handler:" ,
 e?.response?.data || e.message
 );
 return null;

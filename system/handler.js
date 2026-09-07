@@ -8,7 +8,10 @@ import { addBot, delBot, listBot } from "../outdex.js";
 export default async (conn, m) => {
 try {
 const body = m.body || "";
-const prefix = global.prefix.find((p) => body.startsWith(p)) || "";
+const prefix = global.prefix.find(
+(p) => body.startsWith(p)
+) || "";
+if (!prefix) return;
 //=================
 const botNumberJid = conn.decodeJid(conn.user.id);
 const botNumber = botNumberJid.replace(/[^0-9]/g, "");
@@ -247,7 +250,7 @@ return m.reply(mess.wrong);
 }
 let teks = `*⌗ List Access*\n`;
 list.forEach((u, i) => {
-teks += `> *No ${i + 1}:* ${u.id}\n`;
+teks += `> *${i + 1}:* ${u.id}\n`;
 });
 m.reply(teks.trim());
 }

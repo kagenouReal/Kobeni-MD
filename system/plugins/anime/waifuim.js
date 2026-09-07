@@ -29,8 +29,7 @@ tags:Array.isArray(item.tags)
 :[]
 };
 }catch(e){
-console.error(
-"WaifuIM:",
+console.error("Handler:" ,
 e?.response?.data||e.message
 );
 return null;

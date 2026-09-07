@@ -218,7 +218,7 @@ throw new Error(error.response ? `API Error: ${error.response.status}` : 'Networ
 }
 //=================
 const handler = async (m, { conn, isBotAdmins, isAdmins, command, args, text, isAccess, prefix }) => {
-if (!text) return m.reply(`- Example: ${prefix + command} (text)`);
+if (!text) return m.reply(`-Example: ${prefix + command} (text)`);
 await m.reply(mess.wait);
 try {
 const tako = new TakoClient();
@@ -231,7 +231,8 @@ const firstImg = result.data.images[0];
 const imgUrl = firstImg.url || `https://p16-va.tiktokcdn.com/obj/${firstImg.uri}`;
 return await conn.sendMessage(m.chat, {
 image: { url: imgUrl },
-caption: `# *Tako AI Image Generation*`
+caption: `*⌗ Tako AI*
+> *Prompt:* ${text}`
 }, { quoted: m });
 }
 if (result.type === "video_search" && result.data?.videos?.length > 0) {

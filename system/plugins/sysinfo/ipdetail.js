@@ -12,6 +12,7 @@ const replyText = `*⌗ Network & IP Info*
 > *ISP Name:* ${d.isp || "-"}
 > *Organization:* ${d.org || "-"}
 > *ASN:* ${d.as || "-"}
+
 *⌗ Location Info*
 > *City:* ${d.city || "-"}
 > *Region:* ${d.regionName || "-"}

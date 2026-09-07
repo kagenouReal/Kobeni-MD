@@ -32,7 +32,7 @@ error: err.message
 }
 //==================
 const handler = async (m, { conn, command, text, prefix }) => {
-if (!text) return m.reply(`-Example: ${prefix + command} anime girl with white hair`);
+if (!text) return m.reply(`-Example: ${prefix + command} (text)`);
 try {
 m.reply(mess.wait)
 const result = await aiIMGGenerator(text);
@@ -43,12 +43,14 @@ await conn.sendMessage(
 m.chat,
 {
 image: result.buffer,
-caption: `*⌗ MagicStudio AI*\n> *Prompt:* ${text}`
+caption: 
+`*⌗ MagicStudio AI*
+> *Prompt:* ${text}`
 },
 { quoted: m }
 );
 } catch (err) {
-console.error("MagicStudio:", err.message);
+console.error("Handler:" , err.message);
 m.reply(mess.error);
 }
 };

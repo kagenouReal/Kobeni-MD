@@ -253,9 +253,7 @@ const caption = `*⌗ Series Graph*
 > *Title:* ${seriesGraph.title}
 > *Global Rating:* ${seriesGraph.detail.vote_average || 'N/A'}
 > *First Air:* ${seriesGraph.detail.first_air_date || 'N/A'}
-> *Status:* ${seriesGraph.detail.status || 'N/A'}
-
-_Chart by: ${seriesGraph.userName}_`;
+> *Status:* ${seriesGraph.detail.status || 'N/A'}`;
 await conn.sendMessage(m.chat, { 
 image: imageBuffer, 
 caption: caption 

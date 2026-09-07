@@ -19,8 +19,7 @@ headers:{
 if(!res.data?.length)return null;
 return Buffer.from(res.data);
 }catch(e){
-console.error(
-"SSWeb:",
+console.error("Handler:" ,
 e?.response?.data||e.message
 );
 return null;

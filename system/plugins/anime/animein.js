@@ -87,8 +87,7 @@ const animeName = currentCache.title || "Anime";
 const posterUrl = currentCache.image_poster || "https://animein.net/assets/images/logo.png";
 let cap = `*⌗ Download Links*
 > *Title:* ${animeName}
-> *Episode:* ${epInfo.title || `Episode ${epInfo.index || "-"}`}
-`;
+> *Episode:* ${epInfo.title || `Episode ${epInfo.index || "-"}`}`;
 if (servers.length > 0) {
 const groupedServers = {};
 servers.forEach(srv => {
@@ -142,7 +141,7 @@ const cap = `*⌗ AnimeIn Search*
 > *Episodes:* ${episodes ? episodes.length : "-"}
 > *Release:* ${releaseYear}
 > *Genres:* ${genres}
-_Select episode below to watch..._`;
+`;
 if (episodes && episodes.length > 0) {
 const sections = [{
 title: "Episode List",

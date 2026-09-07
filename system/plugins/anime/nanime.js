@@ -91,7 +91,8 @@ if (fs.existsSync(p)) fs.unlinkSync(p);
 //=================
 const handler = async (m, { conn, isBotAdmins, isAdmins, command, args, text, isAccess, prefix }) => {
 try {
-if (!text) return m.reply(`-Example:\n
+if (!text) return m.reply(`-Example:
+
 ${prefix + command} login
 ${prefix + command} verify (url)
 ${prefix + command} logout
@@ -107,7 +108,8 @@ if (inputFirst === "login") {
 if (!isAccess) return m.reply(mess.owner);
 if (currentToken) return m.reply(mess.wrong);
 const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=536941617808-m9krnqev6lfl1e7kkdsj9v1al6dfk0v9.apps.googleusercontent.com&redirect_uri=${encodeURIComponent("https://developers.google.com/oauthplayground")}&response_type=id_token&scope=openid%20profile%20email&nonce=${Math.random().toString(36).substring(2)}`;
-return m.reply(`*⌗ Google Login Link*\n> *Link:* ${authUrl}`.trim());
+return m.reply(`*⌗ Google Login Link*
+> *Link:* ${authUrl}`.trim());
 }
 if (inputFirst === "verify") {
 if (!isAccess) return m.reply(mess.owner);
@@ -163,7 +165,7 @@ quotedMessage: m.message || { conversation: "" }
 };
 const msgData = {
 interactiveMessage: {
-body: { text: "*⌗ Nanime Genre*\n\n_Select genre to view random anime..._" },
+body: { text: "*⌗ Nanime Genre*" },
 footer: { text: "© ᴋᴏʙᴇɴɪ-ᴍᴅ" },
 nativeFlowMessage: {
 buttons: [{
@@ -224,8 +226,7 @@ const cap = `*⌗ Nanime ${genreName}*
 > *Status:* ${a.status_anime || "-"}
 > *Episodes:* ${a.episodes_count || "-"}
 > *Release:* ${a.tanggal_rilis_anime || "-"}
-> *Genres:* ${a.genre_anime?.join(", ") || "-"}
-_Select episode below to watch..._`;
+> *Genres:* ${a.genre_anime?.join(", ") || "-"}`;
 if (a.episodes && a.episodes.length > 0) {
 const sections = [{
 title: "Episode List",
@@ -303,6 +304,7 @@ const userMangaData = userCache.get(m.sender);
 const currentCache = userMangaData ? userMangaData[animeId] : null;
 if (!currentCache) {
 return m.reply(`-Example:
+
 ${prefix + command} login
 ${prefix + command} verify (url)
 ${prefix + command} logout
@@ -351,7 +353,7 @@ quotedMessage: m.message || { conversation: "" }
 };
 const msgData = {
 interactiveMessage: {
-body: { text: "*⌗ Nanime Catalog*\n\n_Select letter to view random anime..._" },
+body: { text: "*⌗ Nanime Catalog*" },
 footer: { text: "© ᴋᴏʙᴇɴɪ-ᴍᴅ" },
 nativeFlowMessage: {
 buttons: [{
@@ -402,8 +404,7 @@ const cap = `*⌗ Nanime Catalog [${selectedLetter}]*
 > *Status:* ${a.status_anime || "-"}
 > *Episodes:* ${a.episodes_count || "-"}
 > *Release:* ${a.tanggal_rilis_anime || "-"}
-> *Genres:* ${a.genre_anime?.join(", ") || "-"}
-_Select episode below to watch..._`;
+> *Genres:* ${a.genre_anime?.join(", ") || "-"}`;
 if (a.episodes && a.episodes.length > 0) {
 const sections = [{
 title: "Episode List",
@@ -485,8 +486,7 @@ const cap = `*⌗ Nanime Search*
 > *Status:* ${a.status_anime || "-"}
 > *Episodes:* ${a.episodes_count || "-"}
 > *Release:* ${a.tanggal_rilis_anime || "-"}
-> *Genres:* ${a.genre_anime?.join(", ") || "-"}
-_Select episode below to watch..._`;
+> *Genres:* ${a.genre_anime?.join(", ") || "-"}`;
 if (a.episodes && a.episodes.length > 0) {
 const sections = [{
 title: "Episode List",

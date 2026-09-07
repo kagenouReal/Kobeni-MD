@@ -70,8 +70,7 @@ maxRedirects:10
 )
 return Buffer.from(res.data)
 }catch(e){
-console.error(
-"AM Download:",
+console.error("Handler:" ,
 e?.response?.data||e.message
 )
 return null
@@ -85,7 +84,7 @@ m,
 try{
 if(!text){
 return m.reply(
-`-Example: ${prefix+command} (Alight Motion share link)`
+`-Example: ${prefix+command} (link)`
 )
 }
 await m.reply(mess.wait)

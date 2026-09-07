@@ -74,8 +74,7 @@ id: `${prefix + command} ${g.id}`
 }));
 if (!groupRows.length) return m.reply(mess.wrong);
 const cap = `*⌗ Broadcast Group*
-> *Status:* Media saved
-_Notice: Select target group..._`;
+> *Status:* Media saved`;
 const sections = [
 {
 title: "Group List",

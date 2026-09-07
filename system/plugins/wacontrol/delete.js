@@ -12,5 +12,5 @@ m.reply(mess.error);
 }
 };
 //=================
-handler.command = ["delete", "del"];
+handler.command = ["delete"];
 export default handler;

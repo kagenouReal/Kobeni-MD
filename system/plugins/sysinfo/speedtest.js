@@ -26,6 +26,7 @@ const replyText = `*⌗ Speedtest Result*
 > *Upload:* ${uploadSpeed} Mbps
 > *Ping:* ${test.ping.latency.toFixed(2)} ms
 > *Jitter:* ${test.ping.jitter.toFixed(2)} ms
+
 *⌗ Server & ISP Info*
 > *ISP Name:* ${test.isp || "-"}
 > *Server Name:* ${test.server.name || "-"}

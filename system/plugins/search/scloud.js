@@ -92,8 +92,7 @@ const cap = `*⌗ SoundCloud Play*
 > *Title:* ${vid.title}
 > *Duration:* ${vid.timestamp}
 > *Views:* ${String(vid.views)}
-> *Author:* ${vid.author.name}
-_Status: Downloading audio, please wait..._`;
+> *Author:* ${vid.author.name}`;
 await conn.sendExternalThumb(
 m.chat,
 {

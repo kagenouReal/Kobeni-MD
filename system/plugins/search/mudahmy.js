@@ -13,7 +13,7 @@ timeout: 15000
 });
 return Buffer.from(res.data);
 } catch (e) {
-console.error("Mudah Image:", e.message);
+console.error("Handler:" , e.message);
 return null;
 }
 };
@@ -128,8 +128,7 @@ status: !!randomResult,
 data: randomResult
 };
 } catch (e) {
-console.error(
-"Mudah API:",
+console.error("Handler:" ,
 e?.response?.data || e.message
 );
 return {
@@ -138,6 +137,7 @@ data: null
 };
 }
 }
+//=================
 const handler = async (
 m,
 { conn, command, text, prefix }
@@ -145,7 +145,7 @@ m,
 try {
 if (!text) {
 return m.reply(
-`-Example: ${prefix + command} iphone`
+`-Example: ${prefix + command} (text)`
 );
 }
 await m.reply(mess.wait);

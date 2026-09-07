@@ -110,7 +110,7 @@ validMedia = data;
 break;
 }
 } catch (error) {
-console.error(`[${config.host}] Download check ${attempt}:`, error.message);
+console.error(`Handler:` , error.message);
 }
 await new Promise((resolve) => setTimeout(resolve, 2000));
 }
@@ -152,7 +152,7 @@ validMedia = data;
 break;
 }
 } catch (error) {
-console.error(`[${config.host}] Redirect download check ${attempt}:`, error.message);
+console.error(`Handler:` , error.message);
 }
 await new Promise((resolve) => setTimeout(resolve, 2000));
 }
@@ -207,7 +207,7 @@ if (fs.existsSync(output)) fs.unlinkSync(output);
 for (const config of configs) {
 const result = await convertWithApi(text.trim(), config, format);
 if (!result.success || !result.downloadURL) {
-console.error(`[${command}] API ${config.host}:`, result.error || "missing download URL");
+console.error(`Handler:` , result.error || "missing download URL");
 continue;
 }
 try {

@@ -204,7 +204,12 @@ const botNumberJid = conn.decodeJid(conn.user.id);
 const botNumber = botNumberJid.replace(/[^0-9]/g, "");
 const dbId = !conn.isClone ? "main" : botNumber;
 const inputFirst = args[0]?.toLowerCase();
-if (!text) return m.reply(`-Example: \n\n${prefix + command} login (email/phone)\n${prefix + command} verify (kodeotp)\n${prefix + command} logout\n${prefix + command} (idparcel)`);
+if (!text) return m.reply(`-Example: 
+
+${prefix + command} login (email/phone)
+${prefix + command} verify (kodeotp)
+${prefix + command} logout
+${prefix + command} (idparcel)`);
 const currentToken = loadTrackingToken(dbId);
 //=================
 if (inputFirst === "login") {

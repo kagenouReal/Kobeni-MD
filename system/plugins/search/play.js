@@ -111,7 +111,7 @@ validMedia = data;
 break;
 }
 } catch (error) {
-console.error(`[${config.host}] Download check ${attempt}:`, error.message);
+console.error(`Handler:` , error.message);
 }
 await new Promise((resolve) => setTimeout(resolve, 2000));
 }
@@ -153,7 +153,7 @@ validMedia = data;
 break;
 }
 } catch (error) {
-console.error(`[${config.host}] Redirect download check ${attempt}:`, error.message);
+console.error(`Handler:` , error.message);
 }
 await new Promise((resolve) => setTimeout(resolve, 2000));
 }
@@ -185,9 +185,7 @@ const cap = `*⌗ YouTube Play*
 > *Title:* ${vid.title}
 > *Duration:* ${vid.timestamp}
 > *Views:* ${String(vid.views)}
-> *Author:* ${vid.author.name}
-
-_Status: Downloading audio, please wait..._`;
+> *Author:* ${vid.author.name}`;
 await conn.sendExternalThumb(
 m.chat,
 {
@@ -238,7 +236,7 @@ const configs = [
 for (const config of configs) {
 const res = await convertWithApi(vid.url, config, "mp3");
 if (!res.success || !res.downloadURL) {
-console.error(`[play] API ${config.host}:`, res.error || "missing download URL");
+console.error(`Handler:` , res.error || "missing download URL");
 continue;
 }
 try {

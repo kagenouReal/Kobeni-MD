@@ -65,7 +65,7 @@ status: true,
 data: results.slice(0, limit)
 };
 } catch (e) {
-console.error("Pinterest:", e?.response?.data || e.message);
+console.error("Handler:" , e?.response?.data || e.message);
 return {
 status: false,
 data: []
@@ -74,7 +74,7 @@ data: []
 }
 const handler = async (m, { conn, command, args, text, prefix }) => {
 try {
-if (!text) return m.reply(`-Example: ${prefix + command} (query)`);
+if (!text) return m.reply(`-Example: ${prefix + command} (text)`);
 await m.reply(mess.wait);
 try {
 const query = text.trim();
@@ -90,9 +90,7 @@ caption: `*⌗ Pinterest Search*
 > *Pinner:* ${pin.pinner?.username ? `@${pin.pinner.username}` : "-"}
 > *Created:* ${pin.created_at || "-"}
 > *Result:* ${i + 1}/${pins.length}
-> *ID:* ${pin.id}
-
-_Source: ${pin.link}`.trim()
+> *ID:* ${pin.id}`.trim()
 }));
 await conn.sendAlbum(
 m.chat,

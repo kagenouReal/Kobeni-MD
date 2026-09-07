@@ -91,8 +91,7 @@ Math.random() * images.length
 )
 ];
 } catch (err) {
-console.error(
-"Cosplayer:",
+console.error("Handler:" ,
 err?.response?.data ||
 err.message
 );
