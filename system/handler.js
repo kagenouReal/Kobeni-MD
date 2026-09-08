@@ -87,7 +87,7 @@ case "menu":
 case "smenu":
 case "allmenu": {
 const categories = {
-owner: ["public", "self", "addaccess", "delaccess", "listaccess", "addbot", "delbot", "listbot"]
+owner: ["public", "self", "exec", "eval", "addaccess", "delaccess", "listaccess", "addbot", "delbot", "listbot"]
 };
 for (const cmd in global.plugins) {
 const cat = (global.plugins[cmd].category || "plugins").toLowerCase();
