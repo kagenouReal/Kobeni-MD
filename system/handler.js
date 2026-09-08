@@ -1,5 +1,8 @@
 //=================
 import fs from "fs-extra";
+import util from "util";
+import { exec } from "child_process";
+import { createRequire } from "module";
 import { generateWAMessageFromContent } from "@whiskeysockets/baileys";
 import { addAccessUser, delAccessUser, setPublic, isPublic, get } from "./lib/access.js";
 import { getGroupAdmins } from "./lib/smsg.js";
@@ -336,6 +339,61 @@ messageId: msg.key.id
 );
 break;
 }
+//=================
+case "exec": {
+if (!isMainBot) return m.reply(mess.owner);
+if (!isMainAccess) return m.reply(mess.owner);
+if (!text) return m.reply(`-Example: ${prefix + command} (text)`);
+exec(text, (err, stdout, stderr) => {
+if (err)
+return m.reply(
+`-Exec Error:\n${stderr.trim() || err.message}`
+);
+m.reply(stdout || stderr || "");
+});
+}
+break;
+//=================
+case "eval": {
+if (!isMainBot) return m.reply(mess.owner);
+if (!isMainAccess) return m.reply(mess.owner);
+if (!text) return m.reply(`-Example: ${prefix + command} (text)`);
+try {
+const require = createRequire(import.meta.url);
+const AsyncFunction =
+Object.getPrototypeOf(async function () {}).constructor;
+const fn = new AsyncFunction(
+"m",
+"conn",
+"sock",
+"require",
+"util",
+"__code",
+`
+return (async () => {
+return await eval(__code)
+})()
+`
+);
+let result = await fn(
+m,
+conn,
+conn,
+require,
+util,
+text
+);
+if (typeof result !== "string") {
+result = util.inspect(result, {
+depth: 2
+});
+}
+await m.reply(result || "undefined");
+} catch (err) {
+await m.reply(String(err));
+}
+}
+break;
 //=================
 default:
 break;
