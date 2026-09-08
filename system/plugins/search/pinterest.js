@@ -110,5 +110,5 @@ m.reply(mess.error);
 }
 };
 //=================
-handler.command = ["pinterest", "pin"];
+handler.command = ["pinterest"];
 export default handler;
